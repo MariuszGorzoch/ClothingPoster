@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<title>Stitch Design</title>
+<link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Manrope%3Awght%40400%3B500%3B700%3B800&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#1173d4",
+            "background-light": "#f6f7f8",
+            "background-dark": "#101922",
+          },
+          fontFamily: {
+            display: ["Manrope"],
+          },
+          borderRadius: {
+            DEFAULT: "0.25rem",
+            lg: "0.5rem",
+            xl: "0.75rem",
+            full: "9999px"
+          },
+        },
+      },
+    };
+  </script>
+<style>
+    .form-input {
+      appearance: none;
+      background-color: transparent;
+      border-width: 0;
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+    }
+    .form-input:focus {
+      outline: none;
+      box-shadow: none;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="flex flex-col min-h-screen">
+<header class="sticky top-0 z-10 bg-background-light dark:bg-background-dark bg-opacity-80 dark:bg-opacity-80 backdrop-blur-sm">
+<div class="container mx-auto px-4">
+<div class="flex items-center justify-between py-4">
+<button class="text-black dark:text-white">
+<svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"></path>
+</svg>
+</button>
+<h1 class="text-lg font-bold text-black dark:text-white">Manage Product</h1>
+<div class="w-6"></div>
+</div>
+</div>
+</header>
+<main class="flex-grow">
+<div class="container mx-auto px-4 py-6">
+<div class="relative aspect-[3/4] w-full rounded-xl overflow-hidden mb-6">
+<div class="absolute inset-0 flex overflow-x-auto snap-x snap-mandatory">
+<div class="flex-shrink-0 w-full h-full snap-center bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAkFHhQBWQ1tM8NgAQOlgeQi8qgsWhxHcBvhZxuNfYfT60s-CeK-65skcWyWtfSZ5T0Mh6D1hgxVnaaoIQBDpPUNdmdu5JIDU40oCBbekOTWDQ-7YM9XSYDZcHHfRHB5p5ElVuja7SjTD7kdjsPqJExYcwnrObLVZ7BrVNW14c1aM66MjykSFQQbkdDFhM-JjSg0-7PYTke-M4IVHW3tv9He1p68j35L9MNs9a7W2wHf4TrJcGfg53gFtQBd5vwpPy9EQzfHU4Ek9s");'></div>
+<div class="flex-shrink-0 w-full h-full snap-center bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDs-5BXpLwHpMJXtC1yp5ZObEr6osuYj5nynLXb06EKzcWze0taljFYdqCi-wXEWcvDbM3LMizgJcmrSDvCm3-b_vwksNpBUO2F-Yf1niXpgJp42nDsD0Sud8-iZ8cMmEJc2G8Gb1-oMNpYRx4hxpn5tgioOH52KCbLwzuD8lCcugzY1kP2QZNApZvVd4NtNy7qBrSOQF9UTeqa7NDdxRhhDmbrHTgY-_HVOetVWasWMNQ24LB5KiU0CRuU5I1KzCCgRz61HMJ-6Fo");'></div>
+<div class="flex-shrink-0 w-full h-full snap-center bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDs-5BXpLwHpMJXtC1yp5ZObEr6osuYj5nynLXb06EKzcWze0taljFYdqCi-wXEWcvDbM3LMizgJcmrSDvCm3-b_vwksNpBUO2F-Yf1niXpgJp42nDsD0Sud8-iZ8cMmEJc2G8Gb1-oMNpYRx4hxpn5tgioOH52KCbLwzuD8lCcugzY1kP2QZNApZvVd4NtNy7qBrSOQF9UTeqa7NDdxRhhDmbrHTgY-_HVOetVWasWMNQ24LB5KiU0CRuU5I1KzCCgRz61HMJ-6Fo");'></div>
+</div>
+<div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
+<div class="w-2 h-2 rounded-full bg-white"></div>
+<div class="w-2 h-2 rounded-full bg-white/50"></div>
+<div class="w-2 h-2 rounded-full bg-white/50"></div>
+</div>
+</div>
+<div class="space-y-4">
+<div>
+<label class="text-sm font-medium text-black/60 dark:text-white/60" for="product-title">Title</label>
+<div class="mt-1 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="product-title" placeholder="e.g. Classic Blue Jeans" type="text" value="Vintage Levi's 501 Jeans"/>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="text-sm font-medium text-black/60 dark:text-white/60" for="category">Category</label>
+<div class="mt-1 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="category" placeholder="e.g. Jeans" type="text" value="Jeans"/>
+</div>
+</div>
+<div>
+<label class="text-sm font-medium text-black/60 dark:text-white/60" for="brand">Brand</label>
+<div class="mt-1 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="brand" placeholder="e.g. Levi's" type="text" value="Levi's"/>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="text-sm font-medium text-black/60 dark:text-white/60" for="model">Model</label>
+<div class="mt-1 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="model" placeholder="e.g. 501" type="text" value="501"/>
+</div>
+</div>
+<div>
+<label class="text-sm font-medium text-black/60 dark:text-white/60" for="colors">Colors</label>
+<div class="mt-1 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="colors" placeholder="e.g. Blue, Indigo" type="text" value="Blue"/>
+</div>
+</div>
+</div>
+<div>
+<label class="text-sm font-medium text-black/60 dark:text-white/60" for="materials">Materials</label>
+<div class="mt-1 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="materials" placeholder="e.g. Denim, Cotton" type="text" value="Denim"/>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="text-sm font-medium text-black/60 dark:text-white/60" for="pattern">Pattern</label>
+<div class="mt-1 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="pattern" placeholder="e.g. Solid" type="text" value="Solid"/>
+</div>
+</div>
+<div>
+<label class="text-sm font-medium text-black/60 dark:text-white/60" for="condition">Condition</label>
+<div class="mt-1 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="condition" placeholder="e.g. Excellent" type="text" value="Excellent"/>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="text-sm font-medium text-black/60 dark:text-white/60" for="size-label">Size Label</label>
+<div class="mt-1 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="size-label" placeholder="e.g. M, 32x32" type="text" value="32x32"/>
+</div>
+</div>
+<div>
+<label class="text-sm font-medium text-black/60 dark:text-white/60" for="fit">Fit</label>
+<div class="mt-1 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="fit" placeholder="e.g. Straight Leg" type="text" value="Straight Leg"/>
+</div>
+</div>
+</div>
+<div>
+<label class="text-sm font-medium text-black/60 dark:text-white/60">Measurements (cm)</label>
+<div class="grid grid-cols-3 gap-2 mt-1">
+<div>
+<input class="w-full h-12 px-3 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10 text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" placeholder="Chest" type="number" value="81"/>
+</div>
+<div>
+<input class="w-full h-12 px-3 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10 text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" placeholder="Waist" type="number" value="81"/>
+</div>
+<div>
+<input class="w-full h-12 px-3 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10 text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" placeholder="Hip" type="number" value="101"/>
+</div>
+<div>
+<input class="w-full h-12 px-3 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10 text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" placeholder="Length" type="number" value="106"/>
+</div>
+<div>
+<input class="w-full h-12 px-3 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10 text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" placeholder="Sleeve" type="number"/>
+</div>
+<div>
+<input class="w-full h-12 px-3 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10 text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" placeholder="Shoulder" type="number"/>
+</div>
+</div>
+</div>
+<div>
+<label class="text-sm font-medium text-black/60 dark:text-white/60" for="style">Style</label>
+<div class="mt-1 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="style" placeholder="e.g. Classic, Vintage" type="text" value="Vintage, Classic"/>
+</div>
+</div>
+<div>
+<label class="text-sm font-medium text-black/60 dark:text-white/60" for="notable-details">Notable Details</label>
+<div class="mt-1 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
+<textarea class="w-full px-4 py-3 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40 resize-none" id="notable-details" placeholder="e.g. Red tab, button fly" rows="2">Red tab, button fly, classic five-pocket design.</textarea>
+</div>
+</div>
+<div>
+<label class="text-sm font-medium text-black/60 dark:text-white/60" for="defects">Defects</label>
+<div class="mt-1 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
+<textarea class="w-full px-4 py-3 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40 resize-none" id="defects" placeholder="e.g. Small fraying on cuff" rows="2">None</textarea>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="sticky bottom-0 bg-background-light dark:bg-background-dark bg-opacity-80 dark:bg-opacity-80 backdrop-blur-sm py-4">
+<div class="container mx-auto px-4">
+<div class="space-y-3">
+<button class="w-full h-12 bg-primary text-white font-bold rounded-lg text-base">Save Changes</button>
+<button class="w-full h-12 bg-primary/20 dark:bg-primary/30 text-primary font-bold rounded-lg text-base">Create Facebook Post</button>
+<button class="w-full h-12 bg-transparent text-red-500 font-bold rounded-lg text-base">Delete Product</button>
+</div>
+</div>
+</footer>
+</div>
+
+</body></html>

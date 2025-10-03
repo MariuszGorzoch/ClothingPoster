@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Manrope%3Awght%40400%3B500%3B700%3B800&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#1173d4",
+              "background-light": "#f6f7f8",
+              "background-dark": "#101922",
+            },
+            fontFamily: {
+              display: ["Manrope"],
+            },
+            borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+          },
+        },
+      };
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<title>Stitch Design</title>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="flex flex-col h-screen justify-between">
+<main class="flex-grow">
+<header class="flex items-center p-4 border-b border-primary/20 dark:border-primary/30">
+<button class="p-2 text-primary">
+<span class="material-symbols-outlined"> close </span>
+</button>
+<h1 class="flex-1 text-center font-bold text-lg text-black dark:text-white pr-10">Add Product</h1>
+</header>
+<section class="p-4 space-y-4">
+<h2 class="font-bold text-lg text-black dark:text-white">Add photos</h2>
+<div class="flex flex-col items-center justify-center space-y-4 border-2 border-dashed border-primary/40 dark:border-primary/60 rounded-lg p-14 text-center">
+<span class="material-symbols-outlined text-5xl text-primary">add_photo_alternate</span>
+<div class="space-y-1">
+<p class="font-bold text-lg text-black dark:text-white">Add photos</p>
+<p class="text-sm text-black/60 dark:text-white/60">Add up to 5 photos of your product</p>
+</div>
+<button class="bg-primary/20 dark:bg-primary/30 text-primary font-bold py-2 px-4 rounded-full text-sm">
+              Add photos
+            </button>
+</div>
+</section>
+<div class="fixed bottom-20 w-full px-4 py-3">
+<button class="w-full bg-primary text-white font-bold py-3 px-5 rounded-lg text-base">
+            Create Product
+          </button>
+</div>
+</main>
+<footer class="border-t border-primary/20 dark:border-primary/30 bg-background-light dark:bg-background-dark fixed bottom-0 w-full pb-3 pt-2">
+<nav class="flex justify-around">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined"> grid_view </span>
+<span class="text-xs">Products</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-black/60 dark:text-white/60" href="#">
+<span class="material-symbols-outlined"> add_circle </span>
+<span class="text-xs">Add</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-black/60 dark:text-white/60" href="#">
+<span class="material-symbols-outlined"> settings </span>
+<span class="text-xs">Settings</span>
+</a>
+</nav>
+</footer>
+</div>
+
+</body></html>
