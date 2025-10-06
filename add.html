@@ -160,6 +160,49 @@
       renderPreview();
     });
 
+    const setCreateButtonState = (isSubmitting) => {
+      if (isSubmitting) {
+        createProductButton.disabled = true;
+        createProductButton.dataset.originalText = createProductButton.textContent;
+        createProductButton.textContent = "Uploading...";
+      } else {
+        createProductButton.disabled = selectedFiles.length === 0;
+        if (createProductButton.dataset.originalText) {
+          createProductButton.textContent = createProductButton.dataset.originalText;
+          delete createProductButton.dataset.originalText;
+        }
+      }
+    };
+
+    createProductButton.addEventListener("click", async () => {
+      if (selectedFiles.length === 0) {
+        return;
+      }
+
+      const formData = new FormData();
+      selectedFiles.forEach((file, index) => {
+        formData.append(`file${index + 1}`, file);
+      });
+
+      try {
+        setCreateButtonState(true);
+        const response = await fetch("https://localhost:7168/products/add", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to upload product images.");
+        }
+
+        window.location.href = "index.html";
+      } catch (error) {
+        console.error(error);
+        alert("There was a problem uploading the product. Please try again.");
+        setCreateButtonState(false);
+      }
+    });
+
     syncInputFiles();
     renderPreview();
 
