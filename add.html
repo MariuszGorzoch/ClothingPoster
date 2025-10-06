@@ -47,13 +47,14 @@
 <p class="font-bold text-lg text-black dark:text-white">Add photos</p>
 <p class="text-sm text-black/60 dark:text-white/60">Add up to 5 photos of your product</p>
 </div>
-<button class="bg-primary/20 dark:bg-primary/30 text-primary font-bold py-2 px-4 rounded-full text-sm">
+<input accept="image/*" class="hidden" id="productPhotos" multiple type="file"/>
+<button class="bg-primary/20 dark:bg-primary/30 text-primary font-bold py-2 px-4 rounded-full text-sm" id="addPhotosButton" type="button">
               Add photos
             </button>
 </div>
 </section>
 <div class="fixed bottom-20 w-full px-4 py-3">
-<button class="w-full bg-primary text-white font-bold py-3 px-5 rounded-lg text-base">
+<button class="w-full bg-primary text-white font-bold py-3 px-5 rounded-lg text-base disabled:opacity-50 disabled:cursor-not-allowed" id="createProductButton" type="button">
             Create Product
           </button>
 </div>
@@ -75,5 +76,32 @@
 </nav>
 </footer>
 </div>
+<script>
+    const addPhotosButton = document.getElementById("addPhotosButton");
+    const productPhotosInput = document.getElementById("productPhotos");
+    const createProductButton = document.getElementById("createProductButton");
 
+    const updateCreateButtonState = () => {
+      createProductButton.disabled = productPhotosInput.files.length === 0;
+    };
+
+    addPhotosButton.addEventListener("click", () => {
+      productPhotosInput.click();
+    });
+
+    productPhotosInput.addEventListener("change", () => {
+      const files = Array.from(productPhotosInput.files);
+
+      if (files.length > 5) {
+        const dataTransfer = new DataTransfer();
+        files.slice(0, 5).forEach((file) => dataTransfer.items.add(file));
+        productPhotosInput.files = dataTransfer.files;
+        alert("You can only select up to 5 photos.");
+      }
+
+      updateCreateButtonState();
+    });
+
+    updateCreateButtonState();
+  </script>
 </body></html>
