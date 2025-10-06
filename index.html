@@ -121,6 +121,14 @@
     const button = document.createElement("button");
     button.className = "bg-primary/20 dark:bg-primary/30 text-primary font-bold py-2 px-4 rounded text-sm";
     button.textContent = "Manage";
+    button.addEventListener("click", () => {
+      const productId = product?.Id ?? "";
+      if (!productId) {
+        return;
+      }
+
+      window.location.href = `manage.html?productId=${encodeURIComponent(productId)}`;
+    });
 
     card.appendChild(image);
     card.appendChild(content);
