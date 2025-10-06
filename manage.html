@@ -274,7 +274,7 @@
             throw new Error(`Failed to update product. Status: ${response.status}`);
           }
 
-          window.alert('Product updated successfully.');
+          window.location.href = 'index.html';
         } catch (error) {
           console.error('Unable to update product.', error);
           window.alert('Unable to save the product changes. Please try again.');
