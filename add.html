@@ -33,11 +33,18 @@
 <body class="font-display bg-background-light dark:bg-background-dark">
 <div class="flex flex-col h-screen justify-between">
 <main class="flex-grow">
-<header class="flex items-center p-4 border-b border-primary/20 dark:border-primary/30">
-<button class="p-2 text-primary" id="closeButton" type="button">
-<span class="material-symbols-outlined"> close </span>
-</button>
-<h1 class="flex-1 text-center font-bold text-lg text-black dark:text-white pr-10">Add Product</h1>
+<header class="sticky top-0 bg-background-light dark:bg-background-dark/80 backdrop-blur-sm z-10 px-4 pt-6 pb-4">
+  <div class="flex items-center justify-between gap-4">
+    <h1 class="text-2xl font-bold text-black dark:text-white">Add Product</h1>
+    <button
+      class="flex size-12 items-center justify-center rounded-full bg-black/5 text-black transition hover:bg-black/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
+      id="closeButton"
+      type="button"
+      aria-label="Close"
+    >
+      <span class="material-symbols-outlined text-3xl leading-none"> close </span>
+    </button>
+  </div>
 </header>
 <section class="p-4 space-y-4">
 <h2 class="font-bold text-lg text-black dark:text-white">Add photos</h2>
