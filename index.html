@@ -103,6 +103,9 @@
       image.classList.add("bg-black/10", "dark:bg-white/10");
     }
 
+    const body = document.createElement("div");
+    body.className = "flex flex-1 items-center gap-4";
+
     const content = document.createElement("div");
     content.className = "flex-1";
 
@@ -112,27 +115,33 @@
 
     const meta = document.createElement("p");
     meta.className = "text-xs text-gray-500 dark:text-gray-400";
-    const status = product.IsProcessed ? "Processed" : "Pending";
+    const isProcessed = Boolean(product.IsProcessed);
+    const status = isProcessed ? "Processed" : "Pending";
     meta.textContent = `${status} • ${product.Id}`;
 
     content.appendChild(title);
     content.appendChild(meta);
 
-    const button = document.createElement("button");
-    button.className = "bg-primary/20 dark:bg-primary/30 text-primary font-bold py-2 px-4 rounded text-sm";
-    button.textContent = "Manage";
-    button.addEventListener("click", () => {
-      const productId = product?.Id ?? "";
-      if (!productId) {
-        return;
-      }
-
-      window.location.href = `manage.html?productId=${encodeURIComponent(productId)}`;
-    });
-
     card.appendChild(image);
-    card.appendChild(content);
-    card.appendChild(button);
+    body.appendChild(content);
+
+    if (isProcessed) {
+      const button = document.createElement("button");
+      button.className = "ml-auto bg-primary/20 dark:bg-primary/30 text-primary font-bold py-2 px-4 rounded text-sm";
+      button.textContent = "Manage";
+      button.addEventListener("click", () => {
+        const productId = product?.Id ?? "";
+        if (!productId) {
+          return;
+        }
+
+        window.location.href = `manage.html?productId=${encodeURIComponent(productId)}`;
+      });
+
+      body.appendChild(button);
+    }
+
+    card.appendChild(body);
 
     return card;
   }
