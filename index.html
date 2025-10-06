@@ -63,17 +63,11 @@
 </div>
 <footer class="sticky bottom-0 bg-background-light dark:bg-background-dark/80 backdrop-blur-sm border-t border-black/10 dark:border-white/10">
 <nav class="flex justify-around items-center h-16">
-<a class="flex flex-col items-center gap-1 text-primary" href="#">
-<svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg">
-<path d="M56,128a16,16,0,1,1-16-16A16,16,0,0,1,56,128ZM40,48A16,16,0,1,0,56,64,16,16,0,0,0,40,48Zm0,128a16,16,0,1,0,16,16A16,16,0,0,0,40,176Zm176-64H88a8,8,0,0,0-8,8v16a8,8,0,0,0,8,8H216a8,8,0,0,0,8-8V120A8,8,0,0,0,216,112Zm0-64H88a8,8,0,0,0-8,8V72a8,8,0,0,0,8,8H216a8,8,0,0,0,8-8V56A8,8,0,0,0,216,48Zm0,128H88a8,8,0,0,0-8,8v16a8,8,0,0,0,8,8H216a8,8,0,0,0,8-8V184A8,8,0,0,0,216,176Z"></path>
-</svg>
-<span class="text-xs font-bold">Products</span>
-</a>
 <a class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">
 <svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg">
 <path d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32Zm0,176H48V48H208V208Zm-32-80a8,8,0,0,1-8,8H136v32a8,8,0,0,1-16,0V136H88a8,8,0,0,1,0-16h32V88a8,8,0,0,1,16,0v32h32A8,8,0,0,1,176,128Z"></path>
 </svg>
-<span class="text-xs font-medium">Create Post</span>
+<span class="text-xs font-medium">Create product</span>
 </a>
 <a class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">
 <svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg">
@@ -154,7 +148,7 @@
     const meta = document.createElement("p");
     meta.className = "text-xs text-gray-500 dark:text-gray-400";
     const status = isProcessed ? "Processed" : "Pending";
-    meta.textContent = `${status} • ${product.Id}`;
+    meta.textContent = status;
 
     content.appendChild(title);
     content.appendChild(meta);
