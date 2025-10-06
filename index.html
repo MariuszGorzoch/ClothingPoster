@@ -127,7 +127,7 @@
 
     if (isProcessed) {
       const button = document.createElement("button");
-      button.className = "ml-auto bg-primary/20 dark:bg-primary/30 text-primary font-bold py-2 px-4 rounded text-sm";
+      button.className = "bg-primary/20 dark:bg-primary/30 text-primary font-bold py-2 px-4 rounded text-sm";
       button.textContent = "Manage";
       button.addEventListener("click", () => {
         const productId = product?.Id ?? "";
@@ -138,7 +138,11 @@
         window.location.href = `manage.html?productId=${encodeURIComponent(productId)}`;
       });
 
-      body.appendChild(button);
+      const actions = document.createElement("div");
+      actions.className = "mt-2 flex justify-end";
+      actions.appendChild(button);
+
+      content.appendChild(actions);
     }
 
     card.appendChild(body);
