@@ -52,6 +52,7 @@
               Add photos
             </button>
 </div>
+<div class="mt-4" id="photoPreview" role="list"></div>
 </section>
 <div class="fixed bottom-20 w-full px-4 py-3">
 <button class="w-full bg-primary text-white font-bold py-3 px-5 rounded-lg text-base disabled:opacity-50 disabled:cursor-not-allowed" id="createProductButton" type="button">
@@ -79,29 +80,102 @@
 <script>
     const addPhotosButton = document.getElementById("addPhotosButton");
     const productPhotosInput = document.getElementById("productPhotos");
+    const photoPreview = document.getElementById("photoPreview");
     const createProductButton = document.getElementById("createProductButton");
+    const MAX_PHOTOS = 5;
+    let selectedFiles = [];
 
     const updateCreateButtonState = () => {
       createProductButton.disabled = productPhotosInput.files.length === 0;
+    };
+
+    const syncInputFiles = () => {
+      const dataTransfer = new DataTransfer();
+      selectedFiles.forEach((file) => dataTransfer.items.add(file));
+      productPhotosInput.files = dataTransfer.files;
+      updateCreateButtonState();
+    };
+
+    const renderPreview = () => {
+      photoPreview.innerHTML = "";
+
+      if (selectedFiles.length === 0) {
+        photoPreview.className = "mt-4";
+        return;
+      }
+
+      photoPreview.className = "mt-4 grid grid-cols-3 gap-3";
+
+      selectedFiles.forEach((file, index) => {
+        const previewItem = document.createElement("div");
+        previewItem.className = "relative w-24 h-24 rounded-lg overflow-hidden border border-black/10 dark:border-white/10";
+        previewItem.setAttribute("role", "listitem");
+
+        const removeButton = document.createElement("button");
+        removeButton.type = "button";
+        removeButton.className = "absolute -top-2 -right-2 bg-black/70 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs";
+        removeButton.setAttribute("aria-label", `Remove ${file.name}`);
+        removeButton.textContent = "✕";
+        removeButton.addEventListener("click", () => {
+          selectedFiles = selectedFiles.filter((_, fileIndex) => fileIndex !== index);
+          syncInputFiles();
+          renderPreview();
+        });
+
+        const image = document.createElement("img");
+        image.alt = file.name;
+        image.className = "w-full h-full object-cover";
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          image.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+
+        previewItem.appendChild(image);
+        previewItem.appendChild(removeButton);
+        photoPreview.appendChild(previewItem);
+      });
     };
 
     addPhotosButton.addEventListener("click", () => {
       productPhotosInput.click();
     });
 
-    productPhotosInput.addEventListener("change", () => {
-      const files = Array.from(productPhotosInput.files);
+    productPhotosInput.addEventListener("change", (event) => {
+      const incomingFiles = Array.from(event.target.files);
+      productPhotosInput.value = "";
+      let limitExceeded = false;
 
-      if (files.length > 5) {
-        const dataTransfer = new DataTransfer();
-        files.slice(0, 5).forEach((file) => dataTransfer.items.add(file));
-        productPhotosInput.files = dataTransfer.files;
-        alert("You can only select up to 5 photos.");
+      incomingFiles.forEach((file) => {
+        const isDuplicate = selectedFiles.some(
+          (existingFile) =>
+            existingFile.name === file.name &&
+            existingFile.size === file.size &&
+            existingFile.lastModified === file.lastModified
+        );
+
+        if (isDuplicate) {
+          return;
+        }
+
+        if (selectedFiles.length >= MAX_PHOTOS) {
+          limitExceeded = true;
+          return;
+        }
+
+        selectedFiles.push(file);
+      });
+
+      if (limitExceeded) {
+        alert(`You can only select up to ${MAX_PHOTOS} photos.`);
       }
 
-      updateCreateButtonState();
+      syncInputFiles();
+      renderPreview();
     });
 
-    updateCreateButtonState();
+    syncInputFiles();
+    renderPreview();
   </script>
 </body></html>
