@@ -194,7 +194,7 @@
 <div class="space-y-3">
 <button class="w-full h-12 bg-primary text-white font-bold rounded-lg text-base">Save Changes</button>
 <button class="w-full h-12 bg-primary/20 dark:bg-primary/30 text-primary font-bold rounded-lg text-base">Create Facebook Post</button>
-<button class="w-full h-12 bg-transparent text-red-500 font-bold rounded-lg text-base">Delete Product</button>
+<button class="w-full h-12 bg-transparent text-red-500 font-bold rounded-lg text-base" id="delete-product">Delete Product</button>
 </div>
 </div>
 </footer>
@@ -206,6 +206,36 @@
     const indicators = document.getElementById('image-indicators');
     const params = new URLSearchParams(window.location.search);
     const productId = params.get('productId');
+    const deleteButton = document.getElementById('delete-product');
+
+    if (deleteButton) {
+      deleteButton.addEventListener('click', async () => {
+        if (!productId) {
+          return;
+        }
+
+        const confirmed = window.confirm('Are you sure you want to delete this product?');
+
+        if (!confirmed) {
+          return;
+        }
+
+        try {
+          const response = await fetch(`https://localhost:7168/products/${encodeURIComponent(productId)}`, {
+            method: 'DELETE',
+          });
+
+          if (!response.ok) {
+            throw new Error(`Failed to delete product. Status: ${response.status}`);
+          }
+
+          window.location.href = 'index.html';
+        } catch (error) {
+          console.error('Unable to delete product.', error);
+          window.alert('Unable to delete the product. Please try again.');
+        }
+      });
+    }
 
     if (!productId) {
       console.warn('No productId provided in the query string.');
