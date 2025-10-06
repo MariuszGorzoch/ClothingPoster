@@ -204,7 +204,7 @@
 <footer class="sticky bottom-0 bg-background-light dark:bg-background-dark bg-opacity-80 dark:bg-opacity-80 backdrop-blur-sm py-4">
 <div class="w-full px-4">
 <div class="space-y-3">
-<button class="w-full h-12 bg-primary text-white font-bold rounded-lg text-base">Save Changes</button>
+<button class="w-full h-12 bg-primary text-white font-bold rounded-lg text-base" id="save-changes">Save Changes</button>
 <button class="w-full h-12 bg-primary/20 dark:bg-primary/30 text-primary font-bold rounded-lg text-base">Create Facebook Post</button>
 <button class="w-full h-12 bg-transparent text-red-500 font-bold rounded-lg text-base" id="delete-product">Delete Product</button>
 </div>
@@ -219,6 +219,7 @@
     const params = new URLSearchParams(window.location.search);
     const productId = params.get('productId');
     const deleteButton = document.getElementById('delete-product');
+    const saveButton = document.getElementById('save-changes');
 
     if (deleteButton) {
       deleteButton.addEventListener('click', async () => {
@@ -255,6 +256,31 @@
     }
 
     fetchProduct(productId);
+
+    if (saveButton) {
+      saveButton.addEventListener('click', async () => {
+        try {
+          const payload = buildPayload();
+
+          const response = await fetch(`https://localhost:7168/products/${encodeURIComponent(productId)}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+          });
+
+          if (!response.ok) {
+            throw new Error(`Failed to update product. Status: ${response.status}`);
+          }
+
+          window.location.href = 'index.html';
+        } catch (error) {
+          console.error('Unable to update product.', error);
+          window.alert('Unable to save the product changes. Please try again.');
+        }
+      });
+    }
 
     async function fetchProduct(id) {
       try {
@@ -382,6 +408,48 @@
       Array.from(indicators.children).forEach((indicator, index) => {
         indicator.className = `w-2 h-2 rounded-full ${index === activeIndex ? 'bg-white' : 'bg-white/50'}`;
       });
+    }
+
+    function buildPayload() {
+      const getValue = (id) => {
+        const element = document.getElementById(id);
+        return element ? element.value.trim() : '';
+      };
+
+      const parseMeasurement = (id) => {
+        const rawValue = getValue(id);
+
+        if (rawValue === '') {
+          return 0;
+        }
+
+        const numericValue = Number(rawValue);
+        return Number.isFinite(numericValue) ? numericValue : 0;
+      };
+
+      return {
+        Attributes: {
+          Title: getValue('product-title'),
+          Category: getValue('category'),
+          Brand: getValue('brand'),
+          Model: getValue('model'),
+          Colors: getValue('colors'),
+          Materials: getValue('materials'),
+          Pattern: getValue('pattern'),
+          Condition: getValue('condition'),
+          SizeLabel: getValue('size-label'),
+          ChestCm: parseMeasurement('measurement-chest'),
+          WaistCm: parseMeasurement('measurement-waist'),
+          HipCm: parseMeasurement('measurement-hip'),
+          LengthCm: parseMeasurement('measurement-length'),
+          SleeveCm: parseMeasurement('measurement-sleeve'),
+          ShoulderCm: parseMeasurement('measurement-shoulder'),
+          Fit: getValue('fit'),
+          Style: getValue('style'),
+          NotableDetails: getValue('notable-details'),
+          Defects: getValue('defects'),
+        },
+      };
     }
   });
 </script>
