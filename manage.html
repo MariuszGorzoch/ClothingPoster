@@ -272,58 +272,24 @@
     if (createPostButton) {
       createPostButton.addEventListener('click', async () => {
         try {
-          const response = await fetch(
-            `https://localhost:7168/products/${encodeURIComponent(productId)}/publish-fb-draft`,
-            {
-              method: 'POST',
-              headers: {
-                Accept: 'application/json',
-              },
+          const payload = buildPayload();
+
+          const response = await fetch(`https://localhost:7168/products/${encodeURIComponent(productId)}/publish-fb-draft`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
             },
-          );
+            body: JSON.stringify(payload),
+          });
 
           if (!response.ok) {
-            throw new Error(`Failed to create Facebook post draft. Status: ${response.status}`);
+            throw new Error(`Failed to update product. Status: ${response.status}`);
           }
 
-          const rawResponse = await response.text();
-          let publishUrl = '';
-
-          try {
-            const parsed = JSON.parse(rawResponse);
-
-            if (typeof parsed === 'string') {
-              publishUrl = parsed;
-            } else if (parsed && typeof parsed === 'object') {
-              const draftLink = typeof parsed.draftLink === 'string' ? parsed.draftLink : '';
-              const fallbackUrl = parsed.url ?? parsed.Url ?? '';
-
-              if (draftLink) {
-                const match = draftLink.match(/https?:\/\/\S+/);
-
-                if (match && match[0]) {
-                  publishUrl = match[0];
-                } else {
-                  publishUrl = draftLink;
-                }
-              }
-
-              if (!publishUrl && typeof fallbackUrl === 'string' && fallbackUrl) {
-                publishUrl = fallbackUrl;
-              }
-            }
-          } catch (parseError) {
-            publishUrl = rawResponse.trim();
-          }
-
-          if (!publishUrl) {
-            throw new Error('The publish URL was not provided in the response.');
-          }
-
-          window.open(publishUrl, '_blank', 'noopener,noreferrer');
+          window.location.href = 'index.html';
         } catch (error) {
-          console.error('Unable to create Facebook post.', error);
-          window.alert('Unable to create the Facebook post. Please try again.');
+          console.error('Unable to update product.', error);
+          window.alert('Unable to save the product changes. Please try again.');
         }
       });
     }
