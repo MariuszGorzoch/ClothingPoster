@@ -198,6 +198,17 @@
 <textarea class="w-full px-4 py-3 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40 resize-none" id="defects" placeholder="e.g. Small fraying on cuff" rows="2"></textarea>
 </div>
 </div>
+
+      <div class="pt-6 border-t border-black/10 dark:border-white/10 hidden" id="facebook-draft-section">
+        <h2 class="text-sm font-medium text-black/60 dark:text-white/60">Facebook draft link</h2>
+        <a
+          class="mt-2 inline-flex items-center text-primary break-all"
+          href="#"
+          id="facebook-draft-link"
+          rel="noopener noreferrer"
+          target="_blank"
+        ></a>
+      </div>
 </div>
 </div>
 </main>
@@ -410,6 +421,25 @@
 
       if (defects) {
         defects.value = attributes.Defects ?? '';
+      }
+
+      const facebookDraftSection = document.getElementById('facebook-draft-section');
+      const facebookDraftLink = document.getElementById('facebook-draft-link');
+
+      if (facebookDraftSection && facebookDraftLink) {
+        const draftUrl = typeof product?.FacebookPostDraftUrl === 'string' ? product.FacebookPostDraftUrl.trim() : '';
+
+        if (draftUrl) {
+          facebookDraftLink.href = draftUrl;
+          facebookDraftLink.textContent = draftUrl;
+          facebookDraftSection.classList.remove('hidden');
+        } else {
+          facebookDraftLink.removeAttribute('href');
+          facebookDraftLink.textContent = '';
+          if (!facebookDraftSection.classList.contains('hidden')) {
+            facebookDraftSection.classList.add('hidden');
+          }
+        }
       }
     }
 
