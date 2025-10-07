@@ -284,7 +284,22 @@
             if (typeof parsed === 'string') {
               publishUrl = parsed;
             } else if (parsed && typeof parsed === 'object') {
-              publishUrl = parsed.url ?? parsed.Url ?? '';
+              const draftLink = typeof parsed.draftLink === 'string' ? parsed.draftLink : '';
+              const fallbackUrl = parsed.url ?? parsed.Url ?? '';
+
+              if (draftLink) {
+                const match = draftLink.match(/https?:\/\/\S+/);
+
+                if (match && match[0]) {
+                  publishUrl = match[0];
+                } else {
+                  publishUrl = draftLink;
+                }
+              }
+
+              if (!publishUrl && typeof fallbackUrl === 'string' && fallbackUrl) {
+                publishUrl = fallbackUrl;
+              }
             }
           } catch (parseError) {
             publishUrl = rawResponse.trim();
