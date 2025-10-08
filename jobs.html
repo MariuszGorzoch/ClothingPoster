@@ -45,51 +45,26 @@
     </style>
   </head>
   <body class="bg-background-light dark:bg-background-dark font-display">
-    <div class="min-h-screen flex flex-col">
+    <div class="flex flex-col h-screen justify-between">
       <div class="flex-grow overflow-y-auto">
         <header
           class="sticky top-0 bg-background-light dark:bg-background-dark/80 backdrop-blur-sm z-10 px-4 pt-6 pb-4"
         >
           <div class="flex items-center justify-between gap-4">
             <h1 class="text-2xl font-bold text-black dark:text-white">Jobs</h1>
-            <div class="flex items-center gap-3">
-              <button
-                class="flex items-center gap-2 rounded-full border border-black/10 dark:border-white/10 px-4 py-2 text-sm font-medium text-black dark:text-white hover:bg-primary/10 transition-colors"
-                id="refresh-jobs"
-                type="button"
-              >
-                <svg
-                  class="size-4"
-                  fill="none"
-                  height="24"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  viewBox="0 0 24 24"
-                  width="24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M21 2v6h-6" />
-                  <path d="M3 12a9 9 0 0 1 15-6l3 3M3 22v-6h6" />
-                  <path d="M21 12a9 9 0 0 1-15 6l-3-3" />
-                </svg>
-                Refresh
-              </button>
-              <button
-                aria-label="Close"
-                class="flex size-12 items-center justify-center rounded-full bg-black/5 text-black transition hover:bg-black/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
-                onclick="window.location.href='index.html';"
-                type="button"
-              >
-                <span class="material-symbols-outlined text-3xl leading-none">
-                  close
-                </span>
-              </button>
-            </div>
+            <button
+              aria-label="Close"
+              class="flex size-12 items-center justify-center rounded-full bg-black/5 text-black transition hover:bg-black/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
+              onclick="window.location.href='index.html';"
+              type="button"
+            >
+              <span class="material-symbols-outlined text-3xl leading-none">
+                close
+              </span>
+            </button>
           </div>
         </header>
-        <main class="px-4 pb-32">
+        <main class="px-4 pb-4">
           <section
             class="space-y-3"
             id="jobs-container"
@@ -98,7 +73,21 @@
           ></section>
         </main>
       </div>
-      
+      <footer class="sticky bottom-0 bg-background-light dark:bg-background-dark/80 backdrop-blur-sm border-t border-black/10 dark:border-white/10">
+        <nav class="flex justify-center items-center h-16">
+          <button
+            class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors"
+            id="refresh-jobs"
+            type="button"
+          >
+            <svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M229.66,165.66a8,8,0,0,1-11.32,0L200,147.31A72,72,0,1,1,208,128a8,8,0,0,1-16,0,56,56,0,1,0-16.27,39.6l-18.63-18.62a8,8,0,0,1,5.65-13.65H224a8,8,0,0,1,8,8v60.69a8,8,0,0,1-13.66,5.64ZM64,128a8,8,0,0,1,16,0,56,56,0,1,0,16.27-39.6l18.63,18.62A8,8,0,0,1,109.25,120H32a8,8,0,0,1-8-8V51.31A8,8,0,0,1,37.66,45.66L56,64A72,72,0,1,1,48,128Z"></path>
+            </svg>
+            <span class="text-xs font-medium">Refresh</span>
+          </button>
+        </nav>
+        <div class="pb-safe"></div>
+      </footer>
     </div>
     <script>
       const jobsContainer = document.getElementById("jobs-container");
