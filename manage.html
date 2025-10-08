@@ -284,23 +284,25 @@
 
     if (extractJobButton) {
       extractJobButton.addEventListener('click', async () => {
-        try {
-          const response = await fetch(`https://localhost:7168/products/${encodeURIComponent(productId)}/extract-job`, {
+       try {
+          const payload = buildPayload();
+
+          const response = await fetch(`https://localhost:7168/products/${encodeURIComponent(productId)}/extract-attr`, {
             method: 'POST',
             headers: {
-              Accept: 'application/json',
+              'Content-Type': 'application/json',
             },
+            body: JSON.stringify(payload),
           });
 
           if (!response.ok) {
-            throw new Error(`Failed to start extract job. Status: ${response.status}`);
+            throw new Error(`Failed to start extract attributes job. Status: ${response.status}`);
           }
 
-          window.alert('Extract job started successfully.');
-          await fetchProduct(productId);
+          window.location.href = 'index.html';
         } catch (error) {
-          console.error('Unable to start extract job.', error);
-          window.alert('Unable to start the extract job. Please try again.');
+          console.error('Failed to start extract attributes job.', error);
+          window.alert('Unable to start extract attributes job. Please try again.');
         }
       });
     }
@@ -321,13 +323,13 @@
           });
 
           if (!response.ok) {
-            throw new Error(`Failed to update product. Status: ${response.status}`);
+            throw new Error(`Failed to start create facebook draft post job. Status: ${response.status}`);
           }
 
           window.location.href = 'index.html';
         } catch (error) {
-          console.error('Unable to update product.', error);
-          window.alert('Unable to save the product changes. Please try again.');
+          console.error('Failed to start create facebook draft post job.', error);
+          window.alert('Unable to create create facebook draft post. Please try again.');
         }
       });
     }
