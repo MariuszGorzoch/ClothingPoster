@@ -189,8 +189,10 @@
         return card;
       }
 
-      async function fetchJobs() {
-        renderPlaceholder("Loading jobs...");
+      async function fetchJobs({ showLoading = true } = {}) {
+        if (showLoading) {
+          renderPlaceholder("Loading jobs...");
+        }
         try {
           const response = await fetch(JOB_ENDPOINT, {
             headers: {
@@ -225,9 +227,14 @@
         }
       }
 
-      refreshButton?.addEventListener("click", fetchJobs);
+      refreshButton?.addEventListener("click", () => fetchJobs());
 
       fetchJobs();
+
+      const REFRESH_INTERVAL_MS = 5000;
+      setInterval(() => {
+        fetchJobs({ showLoading: false });
+      }, REFRESH_INTERVAL_MS);
     </script>
   </body>
 </html>
