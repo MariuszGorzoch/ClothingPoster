@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect" />
+    <link
+      as="style"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Manrope%3Awght%40400%3B500%3B700%3B800&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900"
+      onload="this.rel='stylesheet'"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#1173d4",
+              "background-light": "#f6f7f8",
+              "background-dark": "#101922",
+            },
+            fontFamily: {
+              display: ["Manrope"],
+            },
+            borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+          },
+        },
+      };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <title>Vintage Products • Clothing Poster</title>
+    <style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+    </style>
+  </head>
+  <body class="font-display bg-background-light dark:bg-background-dark">
+    <div class="flex flex-col h-screen justify-between">
+      <div class="flex-grow overflow-y-auto">
+        <main>
+          <header
+            class="sticky top-0 bg-background-light dark:bg-background-dark/80 backdrop-blur-sm z-10 px-4 pt-6 pb-4"
+          >
+            <div class="flex items-center justify-between gap-4">
+              <h1 class="text-2xl font-bold text-black dark:text-white">Import Vintage Product</h1>
+              <button
+                class="flex size-12 items-center justify-center rounded-full bg-black/5 text-black transition hover:bg-black/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
+                id="closeButton"
+                type="button"
+                aria-label="Close"
+              >
+                <span class="material-symbols-outlined text-3xl leading-none"> close </span>
+              </button>
+            </div>
+          </header>
+          <section class="p-4 space-y-5 pb-28">
+            <div class="space-y-2">
+              <h2 class="font-bold text-lg text-black dark:text-white">Vintage listings</h2>
+              <p class="text-sm text-black/70 dark:text-white/70">
+                Choose an item from Monitta Store to import into your collection.
+              </p>
+            </div>
+            <div
+              class="rounded-lg border border-black/10 dark:border-white/10 bg-white/60 dark:bg-background-dark/40 p-4"
+            >
+              <div class="flex items-center gap-3 text-sm text-black/60 dark:text-white/60">
+                <span class="material-symbols-outlined text-xl">info</span>
+                <span>Tap a product card to select it. Only one product can be imported at a time.</span>
+              </div>
+            </div>
+            <div class="space-y-4" id="content"></div>
+          </section>
+        </main>
+      </div>
+      <footer
+        class="sticky bottom-0 bg-background-light dark:bg-background-dark/80 backdrop-blur-sm border-t border-black/10 dark:border-white/10"
+      >
+        <nav class="flex justify-around items-center h-16 px-4">
+          <button
+            class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors disabled:text-gray-300 dark:disabled:text-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
+            id="importProductButton"
+            type="button"
+            disabled
+          >
+            <span class="material-symbols-outlined text-3xl leading-none">download</span>
+            <span class="text-xs font-medium">Import product</span>
+          </button>
+        </nav>
+        <div class="pb-safe"></div>
+      </footer>
+    </div>
+    <script>
+      const API_ENDPOINT = "https://clothingposterappservice-ada8b4eahpfxbrd6.polandcentral-01.azurewebsites.net/monittastore";
+      const content = document.getElementById("content");
+      const importProductButton = document.getElementById("importProductButton");
+      const closeButton = document.getElementById("closeButton");
+
+      let selectedProduct = null;
+
+      const createStatusElement = (message, options = {}) => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "flex flex-col items-center justify-center gap-3 text-center text-black/60 dark:text-white/60";
+
+        const icon = document.createElement("span");
+        icon.className = "material-symbols-outlined text-4xl";
+        icon.textContent = options.icon || "inventory_2";
+
+        const text = document.createElement("p");
+        text.className = "text-sm";
+        text.textContent = message;
+
+        wrapper.appendChild(icon);
+        wrapper.appendChild(text);
+
+        if (options.actionLabel && options.onAction) {
+          const actionButton = document.createElement("button");
+          actionButton.type = "button";
+          actionButton.className =
+            "inline-flex items-center gap-2 rounded-full border border-black/20 px-4 py-2 text-sm font-medium text-black transition hover:bg-black/5 dark:border-white/30 dark:text-white dark:hover:bg-white/10";
+          actionButton.textContent = options.actionLabel;
+          actionButton.addEventListener("click", options.onAction);
+          wrapper.appendChild(actionButton);
+        }
+
+        return wrapper;
+      };
+
+      const clearSelection = () => {
+        selectedProduct = null;
+        importProductButton.disabled = true;
+        importProductButton.dataset.productId = "";
+        document.querySelectorAll("[data-product-card]").forEach((card) => {
+          card.setAttribute("aria-pressed", "false");
+          card.classList.remove("ring-2", "ring-primary", "ring-offset-2", "ring-offset-background-light", "dark:ring-offset-background-dark");
+        });
+      };
+
+      const selectProduct = (card, product) => {
+        clearSelection();
+        selectedProduct = product;
+        card.setAttribute("aria-pressed", "true");
+        card.classList.add("ring-2", "ring-primary", "ring-offset-2", "ring-offset-background-light", "dark:ring-offset-background-dark");
+        importProductButton.disabled = false;
+        importProductButton.dataset.productId = product.id;
+      };
+
+      const renderProducts = (items) => {
+        content.innerHTML = "";
+
+        if (!items.length) {
+          content.appendChild(
+            createStatusElement("No vintage products available right now. Please try again later.", {
+              icon: "inventory",
+              actionLabel: "Reload",
+              onAction: () => {
+                loadProducts();
+              },
+            })
+          );
+          return;
+        }
+
+        const list = document.createElement("div");
+        list.className = "grid gap-4";
+
+        items.forEach((item) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className =
+            "relative flex flex-col items-start gap-3 overflow-hidden rounded-lg border border-black/10 bg-white/80 p-3 text-left shadow-sm transition hover:border-primary/50 hover:shadow-lg dark:border-white/10 dark:bg-background-dark/60 dark:hover:border-primary/50";
+          button.dataset.productCard = "";
+          button.setAttribute("aria-pressed", "false");
+
+          button.addEventListener("click", () => {
+            selectProduct(button, item);
+          });
+
+          const imageWrapper = document.createElement("div");
+          imageWrapper.className = "w-full overflow-hidden rounded-md bg-black/5";
+
+          const image = document.createElement("img");
+          image.src = item.photos?.[0]?.full_size_url || "";
+          image.alt = item.title;
+          image.className = "h-56 w-full object-cover";
+          image.loading = "lazy";
+
+          imageWrapper.appendChild(image);
+
+          const title = document.createElement("h3");
+          title.className = "text-base font-semibold text-black dark:text-white";
+          title.textContent = item.title;
+
+          const link = document.createElement("a");
+          link.href = item.url;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.className =
+            "inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+          link.textContent = "View on Vinted";
+
+          const linkIcon = document.createElement("span");
+          linkIcon.className = "material-symbols-outlined text-base";
+          linkIcon.textContent = "open_in_new";
+
+          link.appendChild(linkIcon);
+
+          button.appendChild(imageWrapper);
+          button.appendChild(title);
+          button.appendChild(link);
+
+          list.appendChild(button);
+        });
+
+        content.appendChild(list);
+      };
+
+      const loadProducts = async () => {
+        content.innerHTML = "";
+        const loadingState = createStatusElement("Loading vintage products...", { icon: "hourglass" });
+        content.appendChild(loadingState);
+
+        try {
+          clearSelection();
+          const response = await fetch(API_ENDPOINT);
+
+          if (!response.ok) {
+            throw new Error("Failed to load products");
+          }
+
+          const data = await response.json();
+          const items = Array.isArray(data?.items) ? data.items : [];
+          renderProducts(items);
+        } catch (error) {
+          console.error(error);
+          content.innerHTML = "";
+          content.appendChild(
+            createStatusElement("We couldn't load the vintage items. Please check your connection and try again.", {
+              icon: "error",
+              actionLabel: "Retry",
+              onAction: () => {
+                loadProducts();
+              },
+            })
+          );
+        }
+      };
+
+      importProductButton.addEventListener("click", async () => {
+        if (!selectedProduct) {
+          return;
+        }
+
+        importProductButton.disabled = true;
+        const originalLabel = importProductButton.querySelector("span:last-child");
+        const originalText = originalLabel.textContent;
+        originalLabel.textContent = "Importing...";
+
+        try {
+          const response = await fetch(
+            "https://clothingposterappservice-ada8b4eahpfxbrd6.polandcentral-01.azurewebsites.net/products/import",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ productId: selectedProduct.id }),
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error("Import failed");
+          }
+
+          window.location.href = "jobs.html";
+        } catch (error) {
+          console.error(error);
+          alert("There was a problem importing the product. Please try again.");
+          importProductButton.disabled = false;
+          originalLabel.textContent = originalText;
+        }
+      });
+
+      closeButton.addEventListener("click", () => {
+        window.location.href = "index.html";
+      });
+
+      loadProducts();
+    </script>
+  </body>
+</html>
