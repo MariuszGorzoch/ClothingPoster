@@ -2,7 +2,7 @@
 <html lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Stitch Design</title>
+<title>Clothing Poster app</title>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
@@ -161,7 +161,7 @@
   async function loadProducts() {
     try {
       productListElement.innerHTML = "";
-      const response = await fetch("https://localhost:7168/products");
+      const response = await fetch("https://clothingposterappservice-ada8b4eahpfxbrd6.polandcentral-01.azurewebsites.net/products");
       if (!response.ok) {
         throw new Error(`Failed to load products (${response.status})`);
       }
