@@ -93,6 +93,7 @@
     </div>
     <script>
       const API_ENDPOINT = "https://clothingposterappservice-ada8b4eahpfxbrd6.polandcentral-01.azurewebsites.net/monittastore";
+      const IMPORT_ENDPOINT = "https://clothingposterappservice-ada8b4eahpfxbrd6.polandcentral-01.azurewebsites.net/import";
       const content = document.getElementById("content");
       const importProductButton = document.getElementById("importProductButton");
       const closeButton = document.getElementById("closeButton");
@@ -258,14 +259,11 @@
         originalLabel.textContent = "Importing...";
 
         try {
-          const response = await fetch(
-            "https://clothingposterappservice-ada8b4eahpfxbrd6.polandcentral-01.azurewebsites.net/products/import",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ productId: selectedProduct.id }),
-            }
-          );
+          const response = await fetch(IMPORT_ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(selectedProduct),
+          });
 
           if (!response.ok) {
             throw new Error("Import failed");
