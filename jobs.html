@@ -118,41 +118,54 @@
         jobsContainer.appendChild(card);
       }
 
+      function getStatusClasses(statusLabel) {
+        const lightBackgrounds = {
+          Pending: "bg-white",
+          "In Progress": "bg-yellow-50",
+          Completed: "bg-green-50",
+          Error: "bg-red-50",
+          Unknown: "bg-white",
+        };
+
+        const darkBackgrounds = {
+          Pending: "dark:bg-white/10",
+          "In Progress": "dark:bg-yellow-400/10",
+          Completed: "dark:bg-green-400/10",
+          Error: "dark:bg-red-400/10",
+          Unknown: "dark:bg-white/10",
+        };
+
+        return `${lightBackgrounds[statusLabel] ?? lightBackgrounds.Unknown} ${
+          darkBackgrounds[statusLabel] ?? darkBackgrounds.Unknown
+        }`;
+      }
+
       function renderJob(job) {
         const card = document.createElement("article");
-        card.className =
-          "p-4 rounded-lg bg-white dark:bg-background-dark/50 border border-transparent hover:border-primary/40 hover:bg-primary/5 transition-colors";
+        const statusLabel = jobStatusMap[job.Status] ?? "Unknown";
+        card.className = `p-4 rounded-lg border border-transparent hover:border-primary/40 hover:bg-primary/5 transition-colors ${getStatusClasses(
+          statusLabel
+        )}`;
         card.setAttribute("role", "listitem");
         card.setAttribute(
           "aria-label",
-          `${job.Name ?? "Unnamed job"} is ${jobStatusMap[job.Status] ?? "Unknown"}`
+          `${job.Name ?? "Unnamed job"} is ${statusLabel}`
         );
 
         const header = document.createElement("div");
-        header.className = "flex items-start justify-between gap-4";
+        header.className = "flex items-start gap-4";
 
         const title = document.createElement("div");
         title.innerHTML = `
           <p class="text-base font-semibold text-black dark:text-white">${
             job.Name ?? "Unnamed job"
           }</p>
-          <p class="text-sm text-gray-600 dark:text-gray-400">${
-            job.ProductId ? `Product: ${job.ProductId}` : ""
-          }</p>
         `;
-
-        const statusPill = document.createElement("span");
-        statusPill.className =
-          "inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium bg-black/5 dark:bg-white/10 text-black dark:text-white";
-        statusPill.textContent = jobStatusMap[job.Status] ?? "Unknown";
-
         header.appendChild(title);
-        header.appendChild(statusPill);
 
         const meta = document.createElement("dl");
         meta.className = "mt-4 grid grid-cols-1 gap-3 text-sm text-gray-600 dark:text-gray-300 sm:grid-cols-2";
         const fields = [
-          { label: "Job ID", value: job.Id ?? "-" },
           { label: "Code", value: jobCodeMap[job.Code] ?? job.Code ?? "Unknown" },
           { label: "Created", value: job.CreatedAt ? new Date(job.CreatedAt).toLocaleString() : "-" },
           { label: "Completed", value: job.CompletedAt ? new Date(job.CompletedAt).toLocaleString() : "-" },
