@@ -32,7 +32,8 @@
   </head>
 <body class="font-display bg-background-light dark:bg-background-dark">
 <div class="flex flex-col h-screen justify-between">
-<main class="flex-grow">
+<div class="flex-grow overflow-y-auto">
+<main>
 <header class="sticky top-0 bg-background-light dark:bg-background-dark/80 backdrop-blur-sm z-10 px-4 pt-6 pb-4">
   <div class="flex items-center justify-between gap-4">
     <h1 class="text-2xl font-bold text-black dark:text-white">Add Product</h1>
@@ -45,28 +46,35 @@
       <span class="material-symbols-outlined text-3xl leading-none"> close </span>
     </button>
   </div>
-</header>
-<section class="p-4 space-y-4">
-<h2 class="font-bold text-lg text-black dark:text-white">Add photos</h2>
-<div class="flex flex-col items-center justify-center space-y-4 border-2 border-dashed border-primary/40 dark:border-primary/60 rounded-lg p-14 text-center">
-<span class="material-symbols-outlined text-5xl text-primary">add_photo_alternate</span>
-<div class="space-y-1">
-<p class="font-bold text-lg text-black dark:text-white">Add photos</p>
-<p class="text-sm text-black/60 dark:text-white/60">Add up to 5 photos of your product</p>
-</div>
-<input accept="image/*" class="hidden" id="productPhotos" multiple type="file"/>
-<button class="bg-primary/20 dark:bg-primary/30 text-primary font-bold py-2 px-4 rounded-full text-sm" id="addPhotosButton" type="button">
-              Add photos
-            </button>
-</div>
-<div class="mt-4" id="photoPreview" role="list"></div>
-</section>
-<div class="fixed bottom-20 w-full px-4 py-3">
-<button class="w-full bg-primary text-white font-bold py-3 px-5 rounded-lg text-base disabled:opacity-50 disabled:cursor-not-allowed" id="createProductButton" type="button">
-            Create Product
-          </button>
-</div>
+  </header>
+  <section class="p-4 space-y-4 pb-28">
+    <h2 class="font-bold text-lg text-black dark:text-white">Photos</h2>
+    <input accept="image/*" class="hidden" hidden id="productPhotos" multiple type="file"/>
+    <div class="space-y-3" id="photoPreview" role="list"></div>
+  </section>
 </main>
+</div>
+  <footer class="sticky bottom-0 bg-background-light dark:bg-background-dark/80 backdrop-blur-sm border-t border-black/10 dark:border-white/10">
+    <nav class="flex justify-around items-center h-16 px-4">
+      <button
+        class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors"
+        id="addPhotosButton"
+        type="button"
+      >
+        <span class="material-symbols-outlined text-3xl leading-none">add_photo_alternate</span>
+        <span class="text-xs font-medium">Add photo</span>
+      </button>
+      <button
+        class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors disabled:text-gray-300 dark:disabled:text-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
+        id="createProductButton"
+        type="button"
+      >
+        <span class="material-symbols-outlined text-3xl leading-none">done</span>
+        <span class="text-xs font-medium">Create product</span>
+      </button>
+    </nav>
+    <div class="pb-safe"></div>
+  </footer>
 </div>
 <script>
     const addPhotosButton = document.getElementById("addPhotosButton");
@@ -92,11 +100,27 @@
       photoPreview.innerHTML = "";
 
       if (selectedFiles.length === 0) {
-        photoPreview.className = "mt-4";
+        photoPreview.className = "space-y-3";
+
+        const emptyState = document.createElement("div");
+        emptyState.className =
+          "flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-black/20 bg-white/60 p-10 text-center text-black/70 dark:border-white/30 dark:bg-background-dark/40 dark:text-white/70";
+
+        const emptyIcon = document.createElement("span");
+        emptyIcon.className = "material-symbols-outlined text-4xl";
+        emptyIcon.textContent = "image";
+
+        const emptyMessage = document.createElement("p");
+        emptyMessage.className = "text-sm";
+        emptyMessage.textContent = "No photos yet. Add up to 5 product photos using the button below.";
+
+        emptyState.appendChild(emptyIcon);
+        emptyState.appendChild(emptyMessage);
+        photoPreview.appendChild(emptyState);
         return;
       }
 
-      photoPreview.className = "mt-4 space-y-3";
+      photoPreview.className = "space-y-3";
 
       selectedFiles.forEach((file, index) => {
         const previewItem = document.createElement("div");
