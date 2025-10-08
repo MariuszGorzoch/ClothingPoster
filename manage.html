@@ -517,17 +517,6 @@
         return element ? element.value.trim() : '';
       };
 
-      const parseMeasurement = (id) => {
-        const rawValue = getValue(id);
-
-        if (rawValue === '') {
-          return 0;
-        }
-
-        const numericValue = Number(rawValue);
-        return Number.isFinite(numericValue) ? numericValue : 0;
-      };
-
       return {
         Attributes: {
           Title: getValue('product-title'),
@@ -539,12 +528,12 @@
           Pattern: getValue('pattern'),
           Condition: getValue('condition'),
           SizeLabel: getValue('size-label'),
-          ChestCm: parseMeasurement('measurement-chest'),
-          WaistCm: parseMeasurement('measurement-waist'),
-          HipCm: parseMeasurement('measurement-hip'),
-          LengthCm: parseMeasurement('measurement-length'),
-          SleeveCm: parseMeasurement('measurement-sleeve'),
-          ShoulderCm: parseMeasurement('measurement-shoulder'),
+          ChestCm: getValue('measurement-chest'),
+          WaistCm: getValue('measurement-waist'),
+          HipCm: getValue('measurement-hip'),
+          LengthCm: getValue('measurement-length'),
+          SleeveCm: getValue('measurement-sleeve'),
+          ShoulderCm: getValue('measurement-shoulder'),
           Fit: getValue('fit'),
           Style: getValue('style'),
           NotableDetails: getValue('notable-details'),
