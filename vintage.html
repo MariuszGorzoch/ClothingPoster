@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
@@ -31,7 +31,7 @@
       };
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-    <title>Vintage Products • Clothing Poster</title>
+    <title>Produkty vintage • Clothing Poster</title>
     <style>
       body {
         min-height: max(884px, 100dvh);
@@ -46,12 +46,12 @@
             class="sticky top-0 bg-background-light dark:bg-background-dark/80 backdrop-blur-sm z-10 px-4 pt-6 pb-4"
           >
             <div class="flex items-center justify-between gap-4">
-              <h1 class="text-2xl font-bold text-black dark:text-white">Import Vintage Product</h1>
+              <h1 class="text-2xl font-bold text-black dark:text-white">Importuj produkt vintage</h1>
               <button
                 class="flex size-12 items-center justify-center rounded-full bg-black/5 text-black transition hover:bg-black/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
                 id="closeButton"
                 type="button"
-                aria-label="Close"
+                aria-label="Zamknij"
               >
                 <span class="material-symbols-outlined text-3xl leading-none"> close </span>
               </button>
@@ -59,9 +59,9 @@
           </header>
           <section class="p-4 space-y-5 pb-28">
             <div class="space-y-2">
-              <h2 class="font-bold text-lg text-black dark:text-white">Vintage listings</h2>
+              <h2 class="font-bold text-lg text-black dark:text-white">Oferty vintage</h2>
               <p class="text-sm text-black/70 dark:text-white/70">
-                Choose an item from Monitta Store to import into your collection.
+                Wybierz produkt ze sklepu Monitta, aby dodać go do swojej kolekcji.
               </p>
             </div>
             <div
@@ -69,7 +69,7 @@
             >
               <div class="flex items-center gap-3 text-sm text-black/60 dark:text-white/60">
                 <span class="material-symbols-outlined text-xl">info</span>
-                <span>Tap a product card to select it. Only one product can be imported at a time.</span>
+                <span>Dotknij karty produktu, aby go wybrać. Jednorazowo można zaimportować tylko jeden produkt.</span>
               </div>
             </div>
             <div class="space-y-4" id="content"></div>
@@ -87,7 +87,7 @@
             disabled
           >
             <span class="material-symbols-outlined text-3xl leading-none">download</span>
-            <span class="text-xs font-medium">Import product</span>
+            <span class="text-xs font-medium">Importuj produkt</span>
           </button>
         </nav>
         <div class="pb-safe"></div>
@@ -154,9 +154,9 @@
 
         if (!items.length) {
           content.appendChild(
-            createStatusElement("No vintage products available right now. Please try again later.", {
+            createStatusElement("Brak dostępnych produktów vintage. Spróbuj ponownie później.", {
               icon: "inventory",
-              actionLabel: "Reload",
+              actionLabel: "Odśwież",
               onAction: () => {
                 loadProducts();
               },
@@ -201,7 +201,7 @@
           link.rel = "noopener noreferrer";
           link.className =
             "inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
-          link.textContent = "View on Vinted";
+          link.textContent = "Zobacz na Vinted";
 
           const linkIcon = document.createElement("span");
           linkIcon.className = "material-symbols-outlined text-base";
@@ -221,7 +221,7 @@
 
       const loadProducts = async () => {
         content.innerHTML = "";
-        const loadingState = createStatusElement("Loading vintage products...", { icon: "hourglass" });
+        const loadingState = createStatusElement("Wczytywanie produktów vintage...", { icon: "hourglass" });
         content.appendChild(loadingState);
 
         try {
@@ -229,7 +229,7 @@
           const response = await fetch(API_ENDPOINT);
 
           if (!response.ok) {
-            throw new Error("Failed to load products");
+            throw new Error("Nie udało się wczytać produktów");
           }
 
           const data = await response.json();
@@ -239,9 +239,9 @@
           console.error(error);
           content.innerHTML = "";
           content.appendChild(
-            createStatusElement("We couldn't load the vintage items. Please check your connection and try again.", {
+            createStatusElement("Nie udało się wczytać produktów vintage. Sprawdź połączenie i spróbuj ponownie.", {
               icon: "error",
-              actionLabel: "Retry",
+              actionLabel: "Ponów",
               onAction: () => {
                 loadProducts();
               },
@@ -258,7 +258,7 @@
         importProductButton.disabled = true;
         const originalLabel = importProductButton.querySelector("span:last-child");
         const originalText = originalLabel.textContent;
-        originalLabel.textContent = "Importing...";
+        originalLabel.textContent = "Importowanie...";
 
         try {
           const response = await fetch(IMPORT_ENDPOINT, {
@@ -268,13 +268,13 @@
           });
 
           if (!response.ok) {
-            throw new Error("Import failed");
+            throw new Error("Nie udało się zaimportować produktu");
           }
 
           window.location.href = "jobs.html";
         } catch (error) {
           console.error(error);
-          alert("There was a problem importing the product. Please try again.");
+          alert("Wystąpił problem podczas importowania produktu. Spróbuj ponownie.");
           importProductButton.disabled = false;
           originalLabel.textContent = originalText;
         }

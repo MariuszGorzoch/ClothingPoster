@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+<html lang="pl"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <link href="MoniTTa.jpg" rel="apple-touch-icon"/>
-<title>Clothing Poster app</title>
+<title>Aplikacja Clothing Poster</title>
 <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
@@ -56,12 +56,12 @@
 <div class="flex flex-col min-h-screen">
 <header class="sticky top-0 bg-background-light dark:bg-background-dark/80 backdrop-blur-sm z-10 px-4 pt-6 pb-4">
   <div class="flex items-center justify-between gap-4">
-    <h1 class="text-2xl font-bold text-black dark:text-white">Manage Product</h1>
+    <h1 class="text-2xl font-bold text-black dark:text-white">Zarządzaj produktem</h1>
     <button
       class="flex size-12 items-center justify-center rounded-full bg-black/5 text-black transition hover:bg-black/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
       onclick="window.location.href='index.html';"
       type="button"
-      aria-label="Close"
+      aria-label="Zamknij"
     >
       <span class="material-symbols-outlined text-3xl leading-none"> close </span>
     </button>
@@ -75,22 +75,22 @@
 </div>
 <div class="space-y-4">
 <div>
-<label class="text-sm font-medium text-black/60 dark:text-white/60" for="product-title">Title</label>
+<label class="text-sm font-medium text-black/60 dark:text-white/60" for="product-title">Tytuł</label>
 <div class="mt-1 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
-<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="product-title" placeholder="e.g. Classic Blue Jeans" type="text"/>
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="product-title" placeholder="np. Klasyczne niebieskie dżinsy" type="text"/>
 </div>
 </div>
 <div class="grid grid-cols-2 gap-4">
 <div>
-<label class="text-sm font-medium text-black/60 dark:text-white/60" for="category">Category</label>
+<label class="text-sm font-medium text-black/60 dark:text-white/60" for="category">Kategoria</label>
 <div class="mt-1 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
-<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="category" placeholder="e.g. Jeans" type="text"/>
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="category" placeholder="np. Dżinsy" type="text"/>
 </div>
 </div>
 <div>
-<label class="text-sm font-medium text-black/60 dark:text-white/60" for="brand">Brand</label>
+<label class="text-sm font-medium text-black/60 dark:text-white/60" for="brand">Marka</label>
 <div class="mt-1 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
-<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="brand" placeholder="e.g. Levi's" type="text"/>
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="brand" placeholder="np. Levi's" type="text"/>
 </div>
 </div>
 </div>
@@ -98,106 +98,106 @@
 <div>
 <label class="text-sm font-medium text-black/60 dark:text-white/60" for="model">Model</label>
 <div class="mt-1 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
-<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="model" placeholder="e.g. 501" type="text"/>
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="model" placeholder="np. 501" type="text"/>
 </div>
 </div>
 <div>
-<label class="text-sm font-medium text-black/60 dark:text-white/60" for="colors">Colors</label>
+<label class="text-sm font-medium text-black/60 dark:text-white/60" for="colors">Kolory</label>
 <div class="mt-1 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
-<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="colors" placeholder="e.g. Blue, Indigo" type="text"/>
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="colors" placeholder="np. Niebieski, indygo" type="text"/>
 </div>
 </div>
 </div>
 <div>
-<label class="text-sm font-medium text-black/60 dark:text-white/60" for="materials">Materials</label>
+<label class="text-sm font-medium text-black/60 dark:text-white/60" for="materials">Materiały</label>
 <div class="mt-1 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
-<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="materials" placeholder="e.g. Denim, Cotton" type="text"/>
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="materials" placeholder="np. Denim, bawełna" type="text"/>
 </div>
 </div>
 <div class="grid grid-cols-2 gap-4">
 <div>
-<label class="text-sm font-medium text-black/60 dark:text-white/60" for="pattern">Pattern</label>
+<label class="text-sm font-medium text-black/60 dark:text-white/60" for="pattern">Wzór</label>
 <div class="mt-1 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
-<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="pattern" placeholder="e.g. Solid" type="text"/>
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="pattern" placeholder="np. Gładki" type="text"/>
 </div>
 </div>
 <div>
-<label class="text-sm font-medium text-black/60 dark:text-white/60" for="condition">Condition</label>
+<label class="text-sm font-medium text-black/60 dark:text-white/60" for="condition">Stan</label>
 <div class="mt-1 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
-<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="condition" placeholder="e.g. Excellent" type="text"/>
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="condition" placeholder="np. Doskonały" type="text"/>
 </div>
 </div>
 </div>
 <div class="grid grid-cols-2 gap-4">
 <div>
-<label class="text-sm font-medium text-black/60 dark:text-white/60" for="size-label">Size Label</label>
+<label class="text-sm font-medium text-black/60 dark:text-white/60" for="size-label">Rozmiar</label>
 <div class="mt-1 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
-<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="size-label" placeholder="e.g. M, 32x32" type="text"/>
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="size-label" placeholder="np. M, 32x32" type="text"/>
 </div>
 </div>
 <div>
-<label class="text-sm font-medium text-black/60 dark:text-white/60" for="fit">Fit</label>
+<label class="text-sm font-medium text-black/60 dark:text-white/60" for="fit">Fason</label>
 <div class="mt-1 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
-<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="fit" placeholder="e.g. Straight Leg" type="text"/>
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="fit" placeholder="np. Prosta nogawka" type="text"/>
 </div>
 </div>
 </div>
 <div>
-<label class="text-sm font-medium text-black/60 dark:text-white/60">Measurements (cm)</label>
+<label class="text-sm font-medium text-black/60 dark:text-white/60">Wymiary (cm)</label>
 <div class="grid grid-cols-3 gap-2 mt-1">
 <div>
 <div class="bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
-<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="measurement-chest" placeholder="Chest" type="number"/>
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="measurement-chest" placeholder="Klatka piersiowa" type="number"/>
 </div>
 </div>
 <div>
 <div class="bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
-<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="measurement-waist" placeholder="Waist" type="number"/>
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="measurement-waist" placeholder="Talia" type="number"/>
 </div>
 </div>
 <div>
 <div class="bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
-<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="measurement-hip" placeholder="Hip" type="number"/>
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="measurement-hip" placeholder="Biodra" type="number"/>
 </div>
 </div>
 <div>
 <div class="bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
-<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="measurement-length" placeholder="Length" type="number"/>
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="measurement-length" placeholder="Długość" type="number"/>
 </div>
 </div>
 <div>
 <div class="bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
-<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="measurement-sleeve" placeholder="Sleeve" type="number"/>
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="measurement-sleeve" placeholder="Rękaw" type="number"/>
 </div>
 </div>
 <div>
 <div class="bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
-<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="measurement-shoulder" placeholder="Shoulder" type="number"/>
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="measurement-shoulder" placeholder="Ramiona" type="number"/>
 </div>
 </div>
 </div>
 </div>
 <div>
-<label class="text-sm font-medium text-black/60 dark:text-white/60" for="style">Style</label>
+<label class="text-sm font-medium text-black/60 dark:text-white/60" for="style">Styl</label>
 <div class="mt-1 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
-<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="style" placeholder="e.g. Classic, Vintage" type="text"/>
+<input class="w-full h-12 px-4 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40" id="style" placeholder="np. Klasyczny, vintage" type="text"/>
 </div>
 </div>
 <div>
-<label class="text-sm font-medium text-black/60 dark:text-white/60" for="notable-details">Notable Details</label>
+<label class="text-sm font-medium text-black/60 dark:text-white/60" for="notable-details">Wyróżniające się detale</label>
 <div class="mt-1 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
-<textarea class="w-full px-4 py-3 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40 resize-none" id="notable-details" placeholder="e.g. Red tab, button fly" rows="2"></textarea>
+<textarea class="w-full px-4 py-3 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40 resize-none" id="notable-details" placeholder="np. Czerwona metka, zapięcie na guziki" rows="2"></textarea>
 </div>
 </div>
 <div>
-<label class="text-sm font-medium text-black/60 dark:text-white/60" for="defects">Defects</label>
+<label class="text-sm font-medium text-black/60 dark:text-white/60" for="defects">Wady</label>
 <div class="mt-1 bg-white/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10">
-<textarea class="w-full px-4 py-3 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40 resize-none" id="defects" placeholder="e.g. Small fraying on cuff" rows="2"></textarea>
+<textarea class="w-full px-4 py-3 bg-transparent text-black dark:text-white placeholder-black/40 dark:placeholder-white/40 resize-none" id="defects" placeholder="np. Delikatne przetarcie przy mankiecie" rows="2"></textarea>
 </div>
 </div>
 
       <div class="pt-6 border-t border-black/10 dark:border-white/10 hidden" id="facebook-draft-section">
-        <h2 class="text-sm font-medium text-black/60 dark:text-white/60">Facebook draft link</h2>
+        <h2 class="text-sm font-medium text-black/60 dark:text-white/60">Link do szkicu na Facebooku</h2>
         <a
           class="mt-2 inline-flex items-center text-primary break-all"
           href="#"
@@ -213,15 +213,15 @@
   <nav class="flex justify-around items-center h-16 px-2">
     <button class="flex flex-col items-center justify-center gap-1 p-0 text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" id="save-product" type="button">
       <span class="material-symbols-outlined text-2xl leading-none">save</span>
-      <span class="text-xs font-medium">Save</span>
+      <span class="text-xs font-medium">Zapisz</span>
     </button>
     <button class="flex flex-col items-center justify-center gap-1 p-0 text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" id="refresh-product" type="button">
       <span class="material-symbols-outlined text-2xl leading-none">refresh</span>
-      <span class="text-xs font-medium">Refresh</span>
+      <span class="text-xs font-medium">Odśwież</span>
     </button>
     <button class="flex flex-col items-center justify-center gap-1 p-0 text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" id="extract-job" type="button">
       <span class="material-symbols-outlined text-2xl leading-none">precision_manufacturing</span>
-      <span class="text-xs font-medium">Extract</span>
+      <span class="text-xs font-medium">Wyodrębnij</span>
     </button>
     <button class="flex flex-col items-center justify-center gap-1 p-0 text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" id="facebook-job" type="button">
       <span class="material-symbols-outlined text-2xl leading-none">share</span>
@@ -229,7 +229,7 @@
     </button>
     <button class="flex flex-col items-center justify-center gap-1 p-0 text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-colors" id="delete-product" type="button">
       <span class="material-symbols-outlined text-2xl leading-none">delete</span>
-      <span class="text-xs font-medium">Delete</span>
+      <span class="text-xs font-medium">Usuń</span>
     </button>
   </nav>
   <div class="pb-safe"></div>
@@ -255,7 +255,7 @@
 
     if (deleteButton) {
       deleteButton.addEventListener('click', async () => {
-        const confirmed = window.confirm('Are you sure you want to delete this product?');
+        const confirmed = window.confirm('Czy na pewno chcesz usunąć ten produkt?');
 
         if (!confirmed) {
           return;
@@ -267,13 +267,13 @@
           });
 
           if (!response.ok) {
-            throw new Error(`Failed to delete product. Status: ${response.status}`);
+            throw new Error(`Nie udało się usunąć produktu. Status: ${response.status}`);
           }
 
           window.location.href = 'index.html';
         } catch (error) {
           console.error('Unable to delete product.', error);
-          window.alert('Unable to delete the product. Please try again.');
+          window.alert('Nie można usunąć produktu. Spróbuj ponownie.');
         }
       });
     }
@@ -298,13 +298,13 @@
           });
 
           if (!response.ok) {
-            throw new Error(`Failed to start extract attributes job. Status: ${response.status}`);
+            throw new Error(`Nie udało się uruchomić zadania wyodrębniania atrybutów. Status: ${response.status}`);
           }
 
           window.location.href = 'jobs.html';
         } catch (error) {
           console.error('Failed to start extract attributes job.', error);
-          window.alert('Unable to start extract attributes job. Please try again.');
+          window.alert('Nie można uruchomić zadania wyodrębniania atrybutów. Spróbuj ponownie.');
         }
       });
     }
@@ -325,13 +325,13 @@
           });
 
           if (!response.ok) {
-            throw new Error(`Failed to start create facebook draft post job. Status: ${response.status}`);
+            throw new Error(`Nie udało się uruchomić zadania tworzenia szkicu posta na Facebooku. Status: ${response.status}`);
           }
 
           window.location.href = 'jobs.html';
         } catch (error) {
           console.error('Failed to start create facebook draft post job.', error);
-          window.alert('Unable to create create facebook draft post. Please try again.');
+          window.alert('Nie można utworzyć szkicu posta na Facebooku. Spróbuj ponownie.');
         }
       });
     }
@@ -350,13 +350,13 @@
           });
 
           if (!response.ok) {
-            throw new Error(`Failed to update product. Status: ${response.status}`);
+            throw new Error(`Nie udało się zaktualizować produktu. Status: ${response.status}`);
           }
 
           window.location.href = 'index.html';
         } catch (error) {
           console.error('Unable to update product.', error);
-          window.alert('Unable to save the product changes. Please try again.');
+          window.alert('Nie można zapisać zmian produktu. Spróbuj ponownie.');
         }
       });
     }
@@ -366,7 +366,7 @@
         const response = await fetch(`https://clothingposterappservice-ada8b4eahpfxbrd6.polandcentral-01.azurewebsites.net/products/${encodeURIComponent(id)}`);
 
         if (!response.ok) {
-          throw new Error(`Failed to fetch product. Status: ${response.status}`);
+          throw new Error(`Nie udało się pobrać produktu. Status: ${response.status}`);
         }
 
         const product = await response.json();
@@ -464,7 +464,7 @@
       if (!images.length) {
         const placeholder = document.createElement('div');
         placeholder.className = 'flex-shrink-0 w-full h-full snap-center bg-background-light dark:bg-background-dark flex items-center justify-center text-black/60 dark:text-white/60';
-        placeholder.textContent = 'No images available';
+        placeholder.textContent = 'Brak dostępnych zdjęć';
         slider.appendChild(placeholder);
         return;
       }

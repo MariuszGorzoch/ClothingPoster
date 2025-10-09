@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <link href="MoniTTa.jpg" rel="apple-touch-icon" />
-    <title>Clothing Poster app</title>
+    <title>Aplikacja Clothing Poster</title>
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
     <link
@@ -52,9 +52,9 @@
           class="sticky top-0 bg-background-light dark:bg-background-dark/80 backdrop-blur-sm z-10 px-4 pt-6 pb-4"
         >
           <div class="flex items-center justify-between gap-4">
-            <h1 class="text-2xl font-bold text-black dark:text-white">Jobs</h1>
+            <h1 class="text-2xl font-bold text-black dark:text-white">Zadania</h1>
             <button
-              aria-label="Close"
+              aria-label="Zamknij"
               class="flex size-12 items-center justify-center rounded-full bg-black/5 text-black transition hover:bg-black/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
               onclick="window.location.href='index.html';"
               type="button"
@@ -82,7 +82,7 @@
             type="button"
           >
             <span aria-hidden="true" class="material-symbols-outlined text-2xl leading-none">refresh</span>
-            <span class="text-xs font-medium">Refresh</span>
+            <span class="text-xs font-medium">Odśwież</span>
           </button>
         </nav>
         <div class="pb-safe"></div>
@@ -94,16 +94,16 @@
       const JOB_ENDPOINT = "https://clothingposterappservice-ada8b4eahpfxbrd6.polandcentral-01.azurewebsites.net/jobs";
 
       const jobCodeMap = {
-        0: "Unknown",
-        1: "AttributeExtractor",
-        2: "FaceBookDraftPost",
+        0: "Nieznany",
+        1: "Wyodrębnianie atrybutów",
+        2: "Szkic posta na Facebooku",
       };
 
       const jobStatusMap = {
-        0: "Pending",
-        1: "In Progress",
-        2: "Completed",
-        3: "Error",
+        0: "Oczekujące",
+        1: "W trakcie",
+        2: "Zakończone",
+        3: "Błąd",
       };
 
       function renderPlaceholder(message) {
@@ -117,36 +117,36 @@
 
       function getStatusClasses(statusLabel) {
         const lightBackgrounds = {
-          Pending: "bg-white",
-          "In Progress": "bg-yellow-50",
-          Completed: "bg-green-50",
-          Error: "bg-red-50",
-          Unknown: "bg-white",
+          Oczekujące: "bg-white",
+          "W trakcie": "bg-yellow-50",
+          Zakończone: "bg-green-50",
+          Błąd: "bg-red-50",
+          Nieznany: "bg-white",
         };
 
         const darkBackgrounds = {
-          Pending: "dark:bg-white/10",
-          "In Progress": "dark:bg-yellow-400/10",
-          Completed: "dark:bg-green-400/10",
-          Error: "dark:bg-red-400/10",
-          Unknown: "dark:bg-white/10",
+          Oczekujące: "dark:bg-white/10",
+          "W trakcie": "dark:bg-yellow-400/10",
+          Zakończone: "dark:bg-green-400/10",
+          Błąd: "dark:bg-red-400/10",
+          Nieznany: "dark:bg-white/10",
         };
 
-        return `${lightBackgrounds[statusLabel] ?? lightBackgrounds.Unknown} ${
-          darkBackgrounds[statusLabel] ?? darkBackgrounds.Unknown
+        return `${lightBackgrounds[statusLabel] ?? lightBackgrounds.Nieznany} ${
+          darkBackgrounds[statusLabel] ?? darkBackgrounds.Nieznany
         }`;
       }
 
       function renderJob(job) {
         const card = document.createElement("article");
-        const statusLabel = jobStatusMap[job.Status] ?? "Unknown";
+        const statusLabel = jobStatusMap[job.Status] ?? "Nieznany";
         card.className = `p-4 rounded-lg border border-transparent hover:border-primary/40 hover:bg-primary/5 transition-colors ${getStatusClasses(
           statusLabel
         )}`;
         card.setAttribute("role", "listitem");
         card.setAttribute(
           "aria-label",
-          `${job.Name ?? "Unnamed job"} is ${statusLabel}`
+          `${job.Name ?? "Zadanie bez nazwy"} – ${statusLabel}`
         );
 
         const header = document.createElement("div");
@@ -155,7 +155,7 @@
         const title = document.createElement("div");
         title.innerHTML = `
           <p class="text-base font-semibold text-black dark:text-white">${
-            job.Name ?? "Unnamed job"
+            job.Name ?? "Zadanie bez nazwy"
           }</p>
         `;
         header.appendChild(title);
@@ -163,10 +163,10 @@
         const meta = document.createElement("dl");
         meta.className = "mt-4 grid grid-cols-1 gap-3 text-sm text-gray-600 dark:text-gray-300 sm:grid-cols-2";
         const fields = [
-          { label: "Code", value: jobCodeMap[job.Code] ?? job.Code ?? "Unknown" },
-          { label: "Created", value: job.CreatedAt ? new Date(job.CreatedAt).toLocaleString() : "-" },
-          { label: "Completed", value: job.CompletedAt ? new Date(job.CompletedAt).toLocaleString() : "-" },
-          { label: "Result", value: job.Result ? job.Result : "—" },
+          { label: "Kod", value: jobCodeMap[job.Code] ?? job.Code ?? "Nieznany" },
+          { label: "Utworzono", value: job.CreatedAt ? new Date(job.CreatedAt).toLocaleString() : "-" },
+          { label: "Zakończono", value: job.CompletedAt ? new Date(job.CompletedAt).toLocaleString() : "-" },
+          { label: "Wynik", value: job.Result ? job.Result : "—" },
         ];
 
         fields.forEach((field) => {
@@ -190,7 +190,7 @@
 
       async function fetchJobs({ showLoading = true } = {}) {
         if (showLoading) {
-          renderPlaceholder("Loading jobs...");
+          renderPlaceholder("Wczytywanie zadań...");
         }
         try {
           const response = await fetch(JOB_ENDPOINT, {
@@ -200,13 +200,13 @@
           });
 
           if (!response.ok) {
-            throw new Error(`Failed to fetch jobs (${response.status})`);
+            throw new Error(`Nie udało się pobrać zadań (${response.status})`);
           }
 
           const jobs = await response.json();
 
           if (!Array.isArray(jobs) || jobs.length === 0) {
-            renderPlaceholder("No jobs available yet.");
+            renderPlaceholder("Brak dostępnych zadań.");
             return;
           }
 
@@ -222,7 +222,7 @@
             });
         } catch (error) {
           console.error(error);
-          renderPlaceholder("We couldn't load jobs. Please try again.");
+          renderPlaceholder("Nie udało się wczytać zadań. Spróbuj ponownie.");
         }
       }
 
