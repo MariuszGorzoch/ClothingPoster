@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+<html lang="pl"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <link href="MoniTTa.jpg" rel="apple-touch-icon"/>
@@ -25,7 +25,7 @@
       };
     </script>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-<title>Clothing Poster app</title>
+<title>Aplikacja Clothing Poster</title>
 <style>
     body {
       min-height: max(884px, 100dvh);
@@ -38,19 +38,19 @@
 <main>
 <header class="sticky top-0 bg-background-light dark:bg-background-dark/80 backdrop-blur-sm z-10 px-4 pt-6 pb-4">
   <div class="flex items-center justify-between gap-4">
-    <h1 class="text-2xl font-bold text-black dark:text-white">Add Product</h1>
+    <h1 class="text-2xl font-bold text-black dark:text-white">Dodaj produkt</h1>
     <button
       class="flex size-12 items-center justify-center rounded-full bg-black/5 text-black transition hover:bg-black/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
       id="closeButton"
       type="button"
-      aria-label="Close"
+      aria-label="Zamknij"
     >
       <span class="material-symbols-outlined text-3xl leading-none"> close </span>
     </button>
   </div>
   </header>
   <section class="p-4 space-y-4 pb-28">
-    <h2 class="font-bold text-lg text-black dark:text-white">Photos</h2>
+    <h2 class="font-bold text-lg text-black dark:text-white">Zdjęcia</h2>
     <input accept="image/*" class="hidden" hidden id="productPhotos" multiple type="file"/>
     <div class="space-y-3" id="photoPreview" role="list"></div>
   </section>
@@ -64,7 +64,7 @@
         type="button"
       >
         <span class="material-symbols-outlined text-3xl leading-none">add_photo_alternate</span>
-        <span class="text-xs font-medium">Add photo</span>
+        <span class="text-xs font-medium">Dodaj zdjęcie</span>
       </button>
       <button
         class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors disabled:text-gray-300 dark:disabled:text-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
@@ -72,7 +72,7 @@
         type="button"
       >
         <span class="material-symbols-outlined text-3xl leading-none">done</span>
-        <span class="text-xs font-medium">Create product</span>
+        <span class="text-xs font-medium">Utwórz produkt</span>
       </button>
     </nav>
     <div class="pb-safe"></div>
@@ -114,7 +114,7 @@
 
         const emptyMessage = document.createElement("p");
         emptyMessage.className = "text-sm";
-        emptyMessage.textContent = "No photos yet. Add up to 5 product photos using the button below.";
+        emptyMessage.textContent = "Brak zdjęć. Dodaj do 5 zdjęć produktu za pomocą przycisku poniżej.";
 
         emptyState.appendChild(emptyIcon);
         emptyState.appendChild(emptyMessage);
@@ -132,7 +132,7 @@
         const removeButton = document.createElement("button");
         removeButton.type = "button";
         removeButton.className = "absolute top-3 right-3 bg-black/70 text-white rounded-full w-7 h-7 flex items-center justify-center text-sm";
-        removeButton.setAttribute("aria-label", `Remove ${file.name}`);
+        removeButton.setAttribute("aria-label", `Usuń ${file.name}`);
         removeButton.textContent = "✕";
         removeButton.addEventListener("click", () => {
           selectedFiles = selectedFiles.filter((_, fileIndex) => fileIndex !== index);
@@ -186,7 +186,7 @@
       });
 
       if (limitExceeded) {
-        alert(`You can only select up to ${MAX_PHOTOS} photos.`);
+        alert(`Możesz wybrać maksymalnie ${MAX_PHOTOS} zdjęć.`);
       }
 
       syncInputFiles();
@@ -197,7 +197,7 @@
       if (isSubmitting) {
         createProductButton.disabled = true;
         createProductButton.dataset.originalText = createProductButton.textContent;
-        createProductButton.textContent = "Uploading...";
+        createProductButton.textContent = "Przesyłanie...";
       } else {
         createProductButton.disabled = selectedFiles.length === 0;
         if (createProductButton.dataset.originalText) {
@@ -225,13 +225,13 @@
         });
 
         if (!response.ok) {
-          throw new Error("Failed to upload product images.");
+          throw new Error("Nie udało się przesłać zdjęć produktu.");
         }
 
         window.location.href = "jobs.html";
       } catch (error) {
         console.error(error);
-        alert("There was a problem uploading the product. Please try again.");
+        alert("Wystąpił problem podczas przesyłania produktu. Spróbuj ponownie.");
         setCreateButtonState(false);
       }
     });
