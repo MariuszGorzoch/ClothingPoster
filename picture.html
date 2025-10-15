@@ -104,17 +104,17 @@
       >
         <nav class="flex h-16 items-center justify-center">
           <button
-            class="flex flex-col items-center gap-1 text-gray-500 transition-colors hover:text-primary dark:text-gray-400 dark:hover:text-primary"
-            id="refresh-picture"
+            class="flex flex-col items-center gap-1 text-gray-500 transition-colors hover:text-primary disabled:pointer-events-none disabled:opacity-60 dark:text-gray-400 dark:hover:text-primary"
+            id="transformations-shortcut"
             type="button"
           >
             <span
               aria-hidden="true"
               class="material-symbols-outlined text-2xl leading-none"
             >
-              refresh
+              auto_awesome
             </span>
-            <span class="text-xs font-medium" data-label>Odśwież</span>
+            <span class="text-xs font-medium" data-label>Transformacje</span>
           </button>
         </nav>
         <div class="pb-safe"></div>
@@ -130,7 +130,9 @@
       const AI_ENDPOINT = "https://localhost:7168/ai/images/generate";
 
       const pictureContainer = document.getElementById("picture-container");
-      const refreshButton = document.getElementById("refresh-picture");
+      const transformationsShortcutButton = document.getElementById(
+        "transformations-shortcut"
+      );
       const feedbackElement = document.getElementById("action-feedback");
       const transformationButtonsContainer = document.getElementById(
         "transformation-buttons"
@@ -349,11 +351,15 @@
 
       function setLoadingState(loading) {
         isLoading = loading;
-        if (refreshButton) {
-          refreshButton.disabled = loading;
-          const refreshLabel = refreshButton.querySelector("[data-label]");
-          if (refreshLabel) {
-            refreshLabel.textContent = loading ? "Ładowanie…" : "Odśwież";
+        if (transformationsShortcutButton) {
+          transformationsShortcutButton.disabled = loading;
+          const buttonLabel = transformationsShortcutButton.querySelector(
+            "[data-label]"
+          );
+          if (buttonLabel) {
+            buttonLabel.textContent = loading
+              ? "Ładowanie…"
+              : "Transformacje";
           }
         }
       }
@@ -658,9 +664,12 @@
         }
       }
 
-      refreshButton?.addEventListener("click", () => {
-        if (!isLoading) {
-          fetchProduct();
+      transformationsShortcutButton?.addEventListener("click", () => {
+        const controlsSection = document.getElementById(
+          "transformation-controls"
+        );
+        if (controlsSection) {
+          controlsSection.scrollIntoView({ behavior: "smooth", block: "start" });
         }
       });
 
