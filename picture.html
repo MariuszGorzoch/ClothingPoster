@@ -283,7 +283,9 @@
         }
       });
 
-      if (!productId || !imageNameParam) {
+      const hasRequiredParams = Boolean(productId && imageNameParam);
+
+      if (!hasRequiredParams) {
         renderPlaceholder(
           "Aby wyświetlić zdjęcie, przekaż parametry productId oraz imageName w adresie URL."
         );
@@ -294,18 +296,17 @@
           "Brakuje wymaganych parametrów w adresie URL.",
           "error"
         );
-        return;
-      }
-
-      if (removeBackgroundButton) {
-        removeBackgroundButton.disabled = true;
-        const removeLabel = removeBackgroundButton.querySelector("[data-label]");
-        if (removeLabel) {
-          removeLabel.textContent = "Wkrótce";
+      } else {
+        if (removeBackgroundButton) {
+          removeBackgroundButton.disabled = true;
+          const removeLabel = removeBackgroundButton.querySelector("[data-label]");
+          if (removeLabel) {
+            removeLabel.textContent = "Wkrótce";
+          }
         }
-      }
 
-      fetchProduct();
+        fetchProduct();
+      }
     </script>
   </body>
 </html>
