@@ -1,0 +1,16 @@
+{
+  "name": "Clothing Poster",
+  "short_name": "ClothingPoster",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#101922",
+  "theme_color": "#1173d4",
+  "icons": [
+    {
+      "src": "MoniTTa.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
