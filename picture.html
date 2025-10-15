@@ -86,7 +86,7 @@
         </main>
       </div>
       <footer
-        class="page-footer border-t border-black/10 bg-background-light backdrop-blur-sm dark:border-white/10 dark:bg-background-dark/80"
+        class="page-footer z-20 border-t border-black/10 bg-background-light backdrop-blur-sm dark:border-white/10 dark:bg-background-dark/80"
       >
         <nav
           aria-label="Dostępne transformacje"
@@ -101,21 +101,6 @@
         <div class="page-footer-safe pb-safe"></div>
       </footer>
     </div>
-    <footer
-      class="fixed inset-x-0 bottom-0 z-20 border-t border-black/10 bg-background-light backdrop-blur-sm dark:border-white/10 dark:bg-background-dark/80"
-    >
-      <nav
-        aria-label="Dostępne transformacje"
-        class="flex h-16 shrink-0 items-center justify-center overflow-x-auto px-4"
-      >
-        <div
-          class="flex flex-nowrap items-center justify-center gap-6"
-          id="transformation-buttons"
-          role="group"
-        ></div>
-      </nav>
-      <div class="pb-safe"></div>
-    </footer>
     <script>
       const params = new URLSearchParams(window.location.search);
       const productId = params.get("productId");
