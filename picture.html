@@ -80,12 +80,29 @@
             role="region"
             aria-label="Podgląd zdjęcia"
           ></section>
+          <section
+            aria-label="Transformacje obrazu"
+            class="mt-6 space-y-3"
+            id="transformation-controls"
+            role="region"
+          >
+            <div class="flex items-center justify-between gap-2">
+              <h2 class="text-sm font-semibold uppercase tracking-wide text-black/70 dark:text-white/70">
+                Dostępne transformacje
+              </h2>
+            </div>
+            <div
+              class="flex flex-wrap gap-2"
+              id="transformation-buttons"
+              role="group"
+            ></div>
+          </section>
         </main>
       </div>
       <footer
         class="sticky bottom-0 border-t border-black/10 bg-background-light backdrop-blur-sm dark:border-white/10 dark:bg-background-dark/80"
       >
-        <nav class="flex h-16 items-center justify-center gap-12">
+        <nav class="flex h-16 items-center justify-center">
           <button
             class="flex flex-col items-center gap-1 text-gray-500 transition-colors hover:text-primary dark:text-gray-400 dark:hover:text-primary"
             id="refresh-picture"
@@ -99,19 +116,6 @@
             </span>
             <span class="text-xs font-medium" data-label>Odśwież</span>
           </button>
-          <button
-            class="flex flex-col items-center gap-1 text-gray-500 transition-colors hover:text-primary disabled:pointer-events-none disabled:opacity-50 dark:text-gray-400 dark:hover:text-primary"
-            id="remove-background"
-            type="button"
-          >
-            <span
-              aria-hidden="true"
-              class="material-symbols-outlined text-2xl leading-none"
-            >
-              ink_eraser
-            </span>
-            <span class="text-xs font-medium" data-label>Usuń tło</span>
-          </button>
         </nav>
         <div class="pb-safe"></div>
       </footer>
@@ -121,15 +125,52 @@
       const productId = params.get("productId");
       const imageNameParam = params.get("imageName");
 
-      const PRODUCT_ENDPOINT = "https://clothingposterappservice-ada8b4eahpfxbrd6.polandcentral-01.azurewebsites.net/products";
+      const PRODUCT_ENDPOINT =
+        "https://clothingposterappservice-ada8b4eahpfxbrd6.polandcentral-01.azurewebsites.net/products";
+      const AI_ENDPOINT = "https://localhost:7168/ai/images/generate";
 
       const pictureContainer = document.getElementById("picture-container");
       const refreshButton = document.getElementById("refresh-picture");
-      const removeBackgroundButton = document.getElementById("remove-background");
       const feedbackElement = document.getElementById("action-feedback");
+      const transformationButtonsContainer = document.getElementById(
+        "transformation-buttons"
+      );
 
-      let currentImageUrl = "";
+      const transformationCatalog = {
+        removeBackground: {
+          label: "Usuń tło",
+          dependsOnStep: null,
+          image: null,
+          prompt:
+            "Remove the background from the clothing product photo while keeping the garment edges crisp and intact.",
+        },
+        placeOnMannequin: {
+          label: "Umieść na manekinie",
+          dependsOnStep: "removeBackground",
+          image: null,
+          prompt:
+            "Place the isolated clothing item on a neutral mannequin with natural proportions and soft studio lighting.",
+        },
+        addStudioBackground: {
+          label: "Dodaj tło studyjne",
+          dependsOnStep: "removeBackground",
+          image: null,
+          prompt:
+            "Add a professional studio backdrop with subtle gradient lighting behind the isolated clothing product.",
+        },
+      };
+
+      const transformationState = {
+        originalImageUrl: "",
+        originalImageName: imageNameParam ?? "",
+        latestStep: null,
+      };
+
+      const hasRequiredParams = Boolean(productId && imageNameParam);
+
       let isLoading = false;
+      let isTransforming = false;
+      let activeTransformationKey = null;
 
       function showFeedback(message, type = "info") {
         if (!feedbackElement) {
@@ -157,6 +198,7 @@
       }
 
       function renderPlaceholder(message) {
+        document.title = "Podgląd zdjęcia produktu";
         pictureContainer.innerHTML = "";
         const card = document.createElement("div");
         card.className = "rounded-lg border border-black/10 bg-white p-4 text-gray-600 shadow-sm dark:border-white/10 dark:bg-background-dark/50 dark:text-gray-300";
@@ -164,7 +206,48 @@
         pictureContainer.appendChild(card);
       }
 
-      function renderProduct(imageUrl, imageName) {
+      function resetTransformations() {
+        Object.values(transformationCatalog).forEach((step) => {
+          if (step.image && typeof step.image === "string" && step.image.startsWith("blob:")) {
+            URL.revokeObjectURL(step.image);
+          }
+          step.image = null;
+        });
+        transformationState.latestStep = null;
+        activeTransformationKey = null;
+        renderTransformationButtons();
+      }
+
+      function getCurrentPreviewInfo() {
+        if (transformationState.latestStep) {
+          const latest = transformationCatalog[transformationState.latestStep];
+          if (latest?.image) {
+            return {
+              url: latest.image,
+              label: latest.label,
+            };
+          }
+        }
+
+        if (transformationState.originalImageUrl) {
+          return {
+            url: transformationState.originalImageUrl,
+            label: null,
+          };
+        }
+
+        return null;
+      }
+
+      function renderPreview() {
+        const preview = getCurrentPreviewInfo();
+
+        if (!preview) {
+          renderPlaceholder("Nie znaleziono zdjęcia o podanej nazwie.");
+          return;
+        }
+
+        const imageName = transformationState.originalImageName ?? "";
         document.title = imageName
           ? `${imageName} – Podgląd zdjęcia`
           : "Podgląd zdjęcia produktu";
@@ -175,26 +258,38 @@
         layout.className = "space-y-4";
 
         const imageWrapper = document.createElement("figure");
-        imageWrapper.className = "overflow-hidden rounded-xl border border-black/10 bg-white shadow-sm dark:border-white/10 dark:bg-background-dark/50";
+        imageWrapper.className =
+          "relative overflow-hidden rounded-xl border border-black/10 bg-white shadow-sm dark:border-white/10 dark:bg-background-dark/50";
 
-        if (imageUrl) {
-          const img = document.createElement("img");
-          img.src = imageUrl;
-          img.alt = imageName ? `Zdjęcie ${imageName}` : "Zdjęcie produktu";
-          img.className = "h-full max-h-[70vh] w-full object-contain bg-black/5 dark:bg-black/30";
-          imageWrapper.appendChild(img);
-        } else {
-          const placeholder = document.createElement("div");
-          placeholder.className = "flex h-full min-h-[320px] items-center justify-center bg-background-light text-center text-black/60 dark:bg-background-dark dark:text-white/60";
-          placeholder.textContent = "Nie znaleziono zdjęcia o podanej nazwie.";
-          imageWrapper.appendChild(placeholder);
+        const img = document.createElement("img");
+        img.src = preview.url;
+        const descriptionSuffix = preview.label ? ` (${preview.label.toLowerCase()})` : "";
+        img.alt = imageName
+          ? `Zdjęcie ${imageName}${descriptionSuffix}`
+          : "Zdjęcie produktu";
+        img.className =
+          "h-full max-h-[70vh] w-full object-contain bg-black/5 dark:bg-black/30";
+        imageWrapper.appendChild(img);
+
+        if (isTransforming) {
+          const overlay = document.createElement("div");
+          overlay.className =
+            "absolute inset-0 flex items-center justify-center bg-black/40 text-sm font-semibold uppercase tracking-wide text-white";
+          overlay.textContent = "Trwa przetwarzanie…";
+          imageWrapper.appendChild(overlay);
         }
 
         const captionCard = document.createElement("section");
-        captionCard.className = "rounded-lg border border-black/10 bg-white p-4 text-sm text-black/70 shadow-sm dark:border-white/10 dark:bg-background-dark/50 dark:text-white/70";
-        captionCard.textContent = imageName
-          ? `Wyświetlane zdjęcie: ${imageName}`
-          : "Wyświetlane zdjęcie produktu";
+        captionCard.className =
+          "rounded-lg border border-black/10 bg-white p-4 text-sm text-black/70 shadow-sm dark:border-white/10 dark:bg-background-dark/50 dark:text-white/70";
+        const captionParts = [];
+        captionParts.push(
+          imageName ? `Wyświetlane zdjęcie: ${imageName}` : "Wyświetlane zdjęcie produktu"
+        );
+        if (preview.label) {
+          captionParts.push(`Transformacja: ${preview.label}`);
+        }
+        captionCard.textContent = captionParts.join(" \u2022 ");
 
         layout.appendChild(imageWrapper);
         layout.appendChild(captionCard);
@@ -228,10 +323,159 @@
 
       function setLoadingState(loading) {
         isLoading = loading;
-        refreshButton.disabled = loading;
-        const refreshLabel = refreshButton.querySelector("[data-label]");
-        if (refreshLabel) {
-          refreshLabel.textContent = loading ? "Ładowanie…" : "Odśwież";
+        if (refreshButton) {
+          refreshButton.disabled = loading;
+          const refreshLabel = refreshButton.querySelector("[data-label]");
+          if (refreshLabel) {
+            refreshLabel.textContent = loading ? "Ładowanie…" : "Odśwież";
+          }
+        }
+      }
+
+      function getSourceImageForStep(stepKey) {
+        const step = transformationCatalog[stepKey];
+        if (!step) {
+          return "";
+        }
+        if (!step.dependsOnStep) {
+          return transformationState.originalImageUrl;
+        }
+        return transformationCatalog[step.dependsOnStep]?.image ?? "";
+      }
+
+      function getAvailableTransformations() {
+        return Object.entries(transformationCatalog).filter(([, step]) => {
+          if (step.image) {
+            return false;
+          }
+          if (step.dependsOnStep === null) {
+            return Boolean(transformationState.originalImageUrl);
+          }
+          const dependencyImage =
+            transformationCatalog[step.dependsOnStep]?.image ?? null;
+          return Boolean(dependencyImage);
+        });
+      }
+
+      function renderTransformationButtons() {
+        if (!transformationButtonsContainer) {
+          return;
+        }
+
+        transformationButtonsContainer.innerHTML = "";
+
+        if (!hasRequiredParams) {
+          const message = document.createElement("p");
+          message.className =
+            "text-sm text-black/60 dark:text-white/60";
+          message.textContent =
+            "Dodaj parametry productId oraz imageName w adresie URL, aby rozpocząć transformacje.";
+          transformationButtonsContainer.appendChild(message);
+          return;
+        }
+
+        const available = getAvailableTransformations();
+
+        if (available.length === 0) {
+          const message = document.createElement("p");
+          message.className =
+            "text-sm text-black/60 dark:text-white/60";
+          if (isTransforming) {
+            message.textContent = "Trwa przetwarzanie obrazu…";
+          } else if (!transformationState.originalImageUrl) {
+            message.textContent =
+              "Załaduj zdjęcie produktu, aby skorzystać z transformacji.";
+          } else {
+            message.textContent =
+              "Wszystkie dostępne transformacje zostały zastosowane.";
+          }
+          transformationButtonsContainer.appendChild(message);
+          return;
+        }
+
+        available.forEach(([key, step]) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className =
+            "flex items-center gap-2 rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-medium text-black transition hover:border-primary/60 hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary disabled:pointer-events-none disabled:opacity-60 dark:border-white/10 dark:bg-background-dark/70 dark:text-white dark:hover:border-primary/60 dark:hover:text-primary";
+          button.disabled = isTransforming;
+          button.textContent =
+            isTransforming && activeTransformationKey === key
+              ? "Przetwarzanie…"
+              : step.label;
+          button.addEventListener("click", () => {
+            if (!isTransforming) {
+              applyTransformation(key);
+            }
+          });
+          transformationButtonsContainer.appendChild(button);
+        });
+      }
+
+      async function applyTransformation(stepKey) {
+        const step = transformationCatalog[stepKey];
+        if (!step) {
+          return;
+        }
+
+        const sourceImageUrl = getSourceImageForStep(stepKey);
+        if (!sourceImageUrl) {
+          showFeedback(
+            "Brak zdjęcia źródłowego dla wybranej transformacji.",
+            "error"
+          );
+          return;
+        }
+
+        clearFeedback();
+        isTransforming = true;
+        activeTransformationKey = stepKey;
+        renderTransformationButtons();
+        renderPreview();
+
+        try {
+          showFeedback("Trwa przetwarzanie obrazu…", "info");
+
+          const sourceResponse = await fetch(sourceImageUrl);
+          if (!sourceResponse.ok) {
+            throw new Error("Nie udało się pobrać obrazu źródłowego.");
+          }
+
+          const sourceBlob = await sourceResponse.blob();
+          const formData = new FormData();
+          formData.append("prompt", step.prompt);
+          formData.append("file", sourceBlob, "source.png");
+
+          const response = await fetch(AI_ENDPOINT, {
+            method: "POST",
+            headers: {
+              Accept: "image/png",
+            },
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error("Nie udało się przekształcić obrazu.");
+          }
+
+          const resultBlob = await response.blob();
+          const objectUrl = URL.createObjectURL(resultBlob);
+          step.image = objectUrl;
+          transformationState.latestStep = stepKey;
+
+          renderPreview();
+          showFeedback("Transformacja zakończona pomyślnie.", "success");
+        } catch (error) {
+          console.error(error);
+          showFeedback(
+            error?.message ?? "Wystąpił problem podczas transformacji obrazu.",
+            "error"
+          );
+        } finally {
+          isTransforming = false;
+          activeTransformationKey = null;
+          renderTransformationButtons();
+          renderPreview();
         }
       }
 
@@ -251,12 +495,21 @@
             throw new Error("Nie udało się pobrać danych produktu.");
           }
           const product = await response.json();
-          currentImageUrl = extractMatchingImage(
+          const matchedImageUrl = extractMatchingImage(
             product?.Images ?? [],
             imageNameParam ?? ""
           );
-          renderProduct(currentImageUrl, imageNameParam ?? "");
-          if (!currentImageUrl) {
+
+          transformationState.originalImageUrl = matchedImageUrl;
+          transformationState.originalImageName = imageNameParam ?? "";
+          resetTransformations();
+
+          if (matchedImageUrl) {
+            renderPreview();
+          } else {
+            renderPlaceholder(
+              "Nie znaleziono zdjęcia o podanej nazwie w bibliotece produktu."
+            );
             showFeedback(
               "Nie znaleziono zdjęcia o podanej nazwie w bibliotece produktu.",
               "error"
@@ -264,7 +517,9 @@
           }
         } catch (error) {
           console.error(error);
-          currentImageUrl = "";
+          transformationState.originalImageUrl = "";
+          transformationState.latestStep = null;
+          resetTransformations();
           renderPlaceholder(
             "Wystąpił problem podczas ładowania danych produktu. Spróbuj ponownie później."
           );
@@ -283,28 +538,17 @@
         }
       });
 
-      const hasRequiredParams = Boolean(productId && imageNameParam);
-
       if (!hasRequiredParams) {
         renderPlaceholder(
           "Aby wyświetlić zdjęcie, przekaż parametry productId oraz imageName w adresie URL."
         );
-        if (removeBackgroundButton) {
-          removeBackgroundButton.disabled = true;
-        }
+        renderTransformationButtons();
         showFeedback(
           "Brakuje wymaganych parametrów w adresie URL.",
           "error"
         );
       } else {
-        if (removeBackgroundButton) {
-          removeBackgroundButton.disabled = true;
-          const removeLabel = removeBackgroundButton.querySelector("[data-label]");
-          if (removeLabel) {
-            removeLabel.textContent = "Wkrótce";
-          }
-        }
-
+        renderTransformationButtons();
         fetchProduct();
       }
     </script>
