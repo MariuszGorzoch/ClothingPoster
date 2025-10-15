@@ -251,6 +251,13 @@
           layout.className = "space-y-4";
           layout.dataset.previewEntry = entry.id;
 
+          const captionCard = document.createElement("section");
+          captionCard.className =
+            "rounded-lg border border-black/10 bg-white p-4 text-sm text-black/70 shadow-sm dark:border-white/10 dark:bg-background-dark/50 dark:text-white/70";
+          captionCard.textContent = entry.isOriginal
+            ? "Oryginalne zdjęcie"
+            : entry.label ?? "Podgląd zdjęcia";
+
           const imageWrapper = document.createElement("figure");
           imageWrapper.className =
             "relative overflow-hidden rounded-xl border border-black/10 bg-white shadow-sm dark:border-white/10 dark:bg-background-dark/50";
@@ -279,24 +286,8 @@
             imageWrapper.appendChild(overlay);
           }
 
-          const captionCard = document.createElement("section");
-          captionCard.className =
-            "rounded-lg border border-black/10 bg-white p-4 text-sm text-black/70 shadow-sm dark:border-white/10 dark:bg-background-dark/50 dark:text-white/70";
-          const captionParts = [];
-          captionParts.push(
-            imageName
-              ? `Wyświetlane zdjęcie: ${imageName}`
-              : "Wyświetlane zdjęcie produktu"
-          );
-          if (entry.label) {
-            captionParts.push(`Transformacja: ${entry.label}`);
-          } else if (entry.isOriginal) {
-            captionParts.push("Oryginalne zdjęcie");
-          }
-          captionCard.textContent = captionParts.join(" \u2022 ");
-
-          layout.appendChild(imageWrapper);
           layout.appendChild(captionCard);
+          layout.appendChild(imageWrapper);
           list.appendChild(layout);
         });
 
