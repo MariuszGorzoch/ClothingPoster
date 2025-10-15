@@ -141,6 +141,7 @@
           label: "Usuń tło",
           dependsOnStep: null,
           image: null,
+          blob: null,
           prompt:
             "Remove the background from the clothing product photo while keeping the garment edges crisp and intact.",
         },
@@ -148,6 +149,7 @@
           label: "Umieść na manekinie",
           dependsOnStep: "removeBackground",
           image: null,
+          blob: null,
           prompt:
             "Place the isolated clothing item on a neutral mannequin with natural proportions and soft studio lighting.",
         },
@@ -155,6 +157,7 @@
           label: "Dodaj tło studyjne",
           dependsOnStep: "removeBackground",
           image: null,
+          blob: null,
           prompt:
             "Add a professional studio backdrop with subtle gradient lighting behind the isolated clothing product.",
         },
@@ -163,6 +166,7 @@
       const transformationState = {
         originalImageUrl: "",
         originalImageName: imageNameParam ?? "",
+        originalImageBlob: null,
         latestStep: null,
       };
 
@@ -212,6 +216,7 @@
             URL.revokeObjectURL(step.image);
           }
           step.image = null;
+          step.blob = null;
         });
         transformationState.latestStep = null;
         activeTransformationKey = null;
@@ -332,15 +337,91 @@
         }
       }
 
-      function getSourceImageForStep(stepKey) {
+      async function downloadImageBlob(imageUrl) {
+        if (!imageUrl) {
+          throw new Error("Brak adresu źródłowego obrazu.");
+        }
+
+        const attemptFetch = async (urlToFetch) => {
+          const response = await fetch(urlToFetch, {
+            cache: "no-store",
+            mode: "cors",
+          });
+
+          if (!response.ok) {
+            throw new Error("Nie udało się pobrać obrazu źródłowego.");
+          }
+
+          return response.blob();
+        };
+
+        try {
+          return await attemptFetch(imageUrl);
+        } catch (error) {
+          const isLikelyCorsIssue =
+            imageUrl.startsWith("http") &&
+            (error instanceof TypeError || error?.message?.includes("Failed to fetch"));
+
+          if (!isLikelyCorsIssue) {
+            throw error;
+          }
+
+          const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(imageUrl)}`;
+
+          try {
+            return await attemptFetch(proxyUrl);
+          } catch (proxyError) {
+            throw new Error(
+              "Nie udało się pobrać obrazu źródłowego. Jeśli strona jest otwierana bezpośrednio z dysku, uruchom ją przez lokalny serwer HTTP lub skontaktuj się z administratorem."
+            );
+          }
+        }
+      }
+
+      async function resolveSourceForStep(stepKey) {
         const step = transformationCatalog[stepKey];
         if (!step) {
-          return "";
+          return null;
         }
+
         if (!step.dependsOnStep) {
-          return transformationState.originalImageUrl;
+          if (transformationState.originalImageBlob instanceof Blob) {
+            return {
+              blob: transformationState.originalImageBlob,
+              filename:
+                transformationState.originalImageName && transformationState.originalImageName.trim()
+                  ? transformationState.originalImageName
+                  : "source.png",
+            };
+          }
+
+          if (!transformationState.originalImageUrl) {
+            return null;
+          }
+
+          const originalBlob = await downloadImageBlob(
+            transformationState.originalImageUrl
+          );
+          transformationState.originalImageBlob = originalBlob;
+
+          return {
+            blob: originalBlob,
+            filename:
+              transformationState.originalImageName && transformationState.originalImageName.trim()
+                ? transformationState.originalImageName
+                : "source.png",
+          };
         }
-        return transformationCatalog[step.dependsOnStep]?.image ?? "";
+
+        const dependency = transformationCatalog[step.dependsOnStep];
+        if (!dependency?.blob) {
+          return null;
+        }
+
+        return {
+          blob: dependency.blob,
+          filename: `${step.dependsOnStep}.png`,
+        };
       }
 
       function getAvailableTransformations() {
@@ -418,33 +499,42 @@
           return;
         }
 
-        const sourceImageUrl = getSourceImageForStep(stepKey);
-        if (!sourceImageUrl) {
-          showFeedback(
-            "Brak zdjęcia źródłowego dla wybranej transformacji.",
-            "error"
-          );
-          return;
-        }
-
         clearFeedback();
         isTransforming = true;
         activeTransformationKey = stepKey;
         renderTransformationButtons();
         renderPreview();
 
+        let source;
+
+        try {
+          source = await resolveSourceForStep(stepKey);
+          if (!source?.blob) {
+            throw new Error("Brak zdjęcia źródłowego dla wybranej transformacji.");
+          }
+        } catch (error) {
+          console.error(error);
+          showFeedback(
+            error?.message ?? "Nie udało się przygotować obrazu źródłowego do transformacji.",
+            "error"
+          );
+          isTransforming = false;
+          activeTransformationKey = null;
+          renderTransformationButtons();
+          renderPreview();
+          return;
+        }
+
         try {
           showFeedback("Trwa przetwarzanie obrazu…", "info");
 
-          const sourceResponse = await fetch(sourceImageUrl);
-          if (!sourceResponse.ok) {
-            throw new Error("Nie udało się pobrać obrazu źródłowego.");
-          }
-
-          const sourceBlob = await sourceResponse.blob();
           const formData = new FormData();
           formData.append("prompt", step.prompt);
-          formData.append("file", sourceBlob, "source.png");
+          formData.append(
+            "file",
+            source.blob,
+            source.filename?.trim() ? source.filename : "source.png"
+          );
 
           const response = await fetch(AI_ENDPOINT, {
             method: "POST",
@@ -461,6 +551,7 @@
           const resultBlob = await response.blob();
           const objectUrl = URL.createObjectURL(resultBlob);
           step.image = objectUrl;
+          step.blob = resultBlob;
           transformationState.latestStep = stepKey;
 
           renderPreview();
@@ -502,6 +593,7 @@
 
           transformationState.originalImageUrl = matchedImageUrl;
           transformationState.originalImageName = imageNameParam ?? "";
+          transformationState.originalImageBlob = null;
           resetTransformations();
 
           if (matchedImageUrl) {
@@ -519,6 +611,7 @@
           console.error(error);
           transformationState.originalImageUrl = "";
           transformationState.latestStep = null;
+          transformationState.originalImageBlob = null;
           resetTransformations();
           renderPlaceholder(
             "Wystąpił problem podczas ładowania danych produktu. Spróbuj ponownie później."
