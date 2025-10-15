@@ -58,7 +58,7 @@
             <button
               aria-label="Zamknij"
               class="flex size-12 items-center justify-center rounded-full bg-black/5 text-black transition hover:bg-black/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
-              onclick="window.location.href='index.html';"
+              id="close-picture"
               type="button"
             >
               <span class="material-symbols-outlined text-3xl leading-none">
@@ -80,42 +80,20 @@
             role="region"
             aria-label="Podgląd zdjęcia"
           ></section>
-          <section
-            aria-label="Transformacje obrazu"
-            class="mt-6 space-y-3"
-            id="transformation-controls"
-            role="region"
-          >
-            <div class="flex items-center justify-between gap-2">
-              <h2 class="text-sm font-semibold uppercase tracking-wide text-black/70 dark:text-white/70">
-                Dostępne transformacje
-              </h2>
-            </div>
-            <div
-              class="flex flex-wrap gap-2"
-              id="transformation-buttons"
-              role="group"
-            ></div>
-          </section>
         </main>
       </div>
       <footer
         class="sticky bottom-0 border-t border-black/10 bg-background-light backdrop-blur-sm dark:border-white/10 dark:bg-background-dark/80"
       >
-        <nav class="flex h-16 items-center justify-center">
-          <button
-            class="flex flex-col items-center gap-1 text-gray-500 transition-colors hover:text-primary dark:text-gray-400 dark:hover:text-primary"
-            id="refresh-picture"
-            type="button"
-          >
-            <span
-              aria-hidden="true"
-              class="material-symbols-outlined text-2xl leading-none"
-            >
-              refresh
-            </span>
-            <span class="text-xs font-medium" data-label>Odśwież</span>
-          </button>
+        <nav
+          aria-label="Dostępne transformacje"
+          class="flex min-h-16 flex-wrap items-center justify-center gap-6 px-4 py-2"
+        >
+          <div
+            class="flex flex-wrap items-center justify-center gap-6"
+            id="transformation-buttons"
+            role="group"
+          ></div>
         </nav>
         <div class="pb-safe"></div>
       </footer>
@@ -130,11 +108,11 @@
       const AI_ENDPOINT = "https://localhost:7168/ai/images/generate";
 
       const pictureContainer = document.getElementById("picture-container");
-      const refreshButton = document.getElementById("refresh-picture");
       const feedbackElement = document.getElementById("action-feedback");
       const transformationButtonsContainer = document.getElementById(
         "transformation-buttons"
       );
+      const closeButton = document.getElementById("close-picture");
 
       const transformationCatalog = {
         removeBackground: {
@@ -163,6 +141,12 @@
         },
       };
 
+      const transformationIconMap = {
+        removeBackground: "layers_clear",
+        placeOnMannequin: "accessibility",
+        addStudioBackground: "photo_camera_back",
+      };
+
       const transformationState = {
         originalImageUrl: "",
         originalImageName: imageNameParam ?? "",
@@ -176,6 +160,13 @@
       let isLoading = false;
       let isTransforming = false;
       let activeTransformationKey = null;
+
+      closeButton?.addEventListener("click", () => {
+        const targetUrl = productId
+          ? `manage.html?productId=${encodeURIComponent(productId)}`
+          : "manage.html";
+        window.location.href = targetUrl;
+      });
 
       function showFeedback(message, type = "info") {
         if (!feedbackElement) {
@@ -349,13 +340,7 @@
 
       function setLoadingState(loading) {
         isLoading = loading;
-        if (refreshButton) {
-          refreshButton.disabled = loading;
-          const refreshLabel = refreshButton.querySelector("[data-label]");
-          if (refreshLabel) {
-            refreshLabel.textContent = loading ? "Ładowanie…" : "Odśwież";
-          }
-        }
+        renderTransformationButtons();
       }
 
       async function downloadImageBlob(imageUrl) {
@@ -466,32 +451,40 @@
 
         transformationButtonsContainer.innerHTML = "";
 
-        if (!hasRequiredParams) {
+        const appendMessage = (text) => {
           const message = document.createElement("p");
           message.className =
-            "text-sm text-black/60 dark:text-white/60";
-          message.textContent =
-            "Dodaj parametry productId oraz imageName w adresie URL, aby rozpocząć transformacje.";
+            "max-w-xs text-center text-xs text-black/60 dark:text-white/60";
+          message.textContent = text;
           transformationButtonsContainer.appendChild(message);
+        };
+
+        if (!hasRequiredParams) {
+          appendMessage(
+            "Dodaj parametry productId oraz imageName w adresie URL, aby rozpocząć transformacje."
+          );
+          return;
+        }
+
+        if (isLoading) {
+          appendMessage("Ładowanie danych produktu…");
           return;
         }
 
         const available = getAvailableTransformations();
 
         if (available.length === 0) {
-          const message = document.createElement("p");
-          message.className =
-            "text-sm text-black/60 dark:text-white/60";
           if (isTransforming) {
-            message.textContent = "Trwa przetwarzanie obrazu…";
+            appendMessage("Trwa przetwarzanie obrazu…");
           } else if (!transformationState.originalImageUrl) {
-            message.textContent =
-              "Załaduj zdjęcie produktu, aby skorzystać z transformacji.";
+            appendMessage(
+              "Załaduj zdjęcie produktu, aby skorzystać z transformacji."
+            );
           } else {
-            message.textContent =
-              "Wszystkie dostępne transformacje zostały zastosowane.";
+            appendMessage(
+              "Wszystkie dostępne transformacje zostały zastosowane."
+            );
           }
-          transformationButtonsContainer.appendChild(message);
           return;
         }
 
@@ -499,17 +492,30 @@
           const button = document.createElement("button");
           button.type = "button";
           button.className =
-            "flex items-center gap-2 rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-medium text-black transition hover:border-primary/60 hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary disabled:pointer-events-none disabled:opacity-60 dark:border-white/10 dark:bg-background-dark/70 dark:text-white dark:hover:border-primary/60 dark:hover:text-primary";
-          button.disabled = isTransforming;
-          button.textContent =
+            "flex flex-col items-center gap-1 text-gray-500 transition-colors hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary disabled:pointer-events-none disabled:opacity-50 dark:text-gray-400 dark:hover:text-primary";
+          button.disabled = isTransforming || isLoading;
+
+          const iconSpan = document.createElement("span");
+          iconSpan.className = "material-symbols-outlined text-2xl leading-none";
+          iconSpan.setAttribute("aria-hidden", "true");
+          iconSpan.textContent =
+            transformationIconMap[key] ?? "auto_fix_high";
+          button.appendChild(iconSpan);
+
+          const labelSpan = document.createElement("span");
+          labelSpan.className = "text-xs font-medium";
+          labelSpan.textContent =
             isTransforming && activeTransformationKey === key
               ? "Przetwarzanie…"
               : step.label;
+          button.appendChild(labelSpan);
+
           button.addEventListener("click", () => {
-            if (!isTransforming) {
+            if (!isTransforming && !isLoading) {
               applyTransformation(key);
             }
           });
+
           transformationButtonsContainer.appendChild(button);
         });
       }
@@ -657,12 +663,6 @@
           setLoadingState(false);
         }
       }
-
-      refreshButton?.addEventListener("click", () => {
-        if (!isLoading) {
-          fetchProduct();
-        }
-      });
 
       if (!hasRequiredParams) {
         renderPlaceholder(
