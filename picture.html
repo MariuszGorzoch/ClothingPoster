@@ -121,24 +121,32 @@
           image: null,
           blob: null,
           prompt:
-            "Remove the background from the clothing product photo while keeping the garment edges crisp and intact.",
+            "Remove the background from the provided image. Return only the subject on a clean, white background. Do not add any text or watermark. Ensure the entire subject is visible.",
         },
         placeOnMannequin: {
-          label: "Umieść na manekinie",
+          label: "Manekin",
           dependsOnStep: "removeBackground",
           image: null,
           blob: null,
           prompt:
-            "Place the isolated clothing item on a neutral mannequin with natural proportions and soft studio lighting.",
+            "Place the provided product image (with background already removed) onto a neutral mannequin. Ensure the clothing fits the mannequin naturally and proportionally — no warping or stretching. The garment should appear as if it’s actually being worn by the mannequin. Adjust scale and alignment so the product sits correctly on the body (shoulders, waist, and hem aligned properly). Maintain the original shape, cut, and proportions of the garment. Do not crop, squeeze, or distort. Add natural, soft shadows and highlights to blend the product seamlessly with the mannequin. Keep the mannequin posture upright and symmetrical. Ensure clean edges — no visible background artifacts. Use a pure white or very light neutral background. Do not add logos, watermarks, or extra elements. Keep lighting consistent between the garment and mannequin for a realistic look. Center the final composition, full mannequin in frame. Optional stylistic enhancements: Slight fabric contouring to suggest a realistic drape on the body. Light smoothing around edges to remove cutout harshness. Subtle shadow under hems or sleeves for depth.",
         },
-        addStudioBackground: {
-          label: "Dodaj tło studyjne",
+        addOnDoors: {
+          label: "Drzwi",
           dependsOnStep: "removeBackground",
           image: null,
           blob: null,
           prompt:
-            "Add a professional studio backdrop with subtle gradient lighting behind the isolated clothing product.",
+            "Place the provided product image (with background already removed) in front of an elegant door background. Choose a door that complements and enhances the product’s colors, creating a visually appealing and stylish scene. Ensure the product remains the central focus, properly scaled and proportioned, without warping or distortion. Align the product naturally as if it’s displayed or hanging in front of the door. Match the lighting and shadows so the product and background blend seamlessly. Use soft natural shadows under and around the product for realism. The background should be clean, minimal, and color-coordinated to make the product look attractive and desirable to potential buyers. Keep edges sharp and smooth, with no background artifacts. Do not add logos, watermarks, or extra elements. Ensure the composition is well-balanced, centered, and aesthetically pleasing. Maintain a high-resolution, professional appearance suitable for e-commerce display.",
         },
+        buyerEffect: {
+          label: "Sprzedaz",
+          dependsOnStep: "removeBackground",
+          image: null,
+          blob: null,
+          prompt:
+            "Place the provided product image (with background already removed) in an elegant, bright, and stylish setting designed to appeal to women aged 30–50. Choose a background and lighting that highlight the product’s color, shape, and texture, making it look premium and desirable. Position the product front and center with perfect proportions — no stretching or warping — and ensure it looks naturally placed in the scene. Use soft, warm lighting to create a welcoming and sophisticated atmosphere. Add subtle shadows and highlights to enhance the product’s contours and make it stand out. The background should be tasteful, modern, and minimalistic, with complementary colors that elevate the product without overpowering it. Ensure clean, smooth edges and a balanced composition. Avoid clutter, logos, or distracting elements. The overall look should feel aspirational, feminine, elegant, and trustworthy — encouraging the viewer to imagine owning and wearing the product",
+        },        
       };
 
       const transformationIconMap = {
