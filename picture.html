@@ -302,9 +302,6 @@
           captionCard.className =
             "rounded-lg border border-black/10 bg-white p-4 text-sm text-black/70 shadow-sm dark:border-white/10 dark:bg-background-dark/50 dark:text-white/70";
 
-          const captionContent = document.createElement("div");
-          captionContent.className = "space-y-2";
-
           const captionHeader = document.createElement("div");
           captionHeader.className = "flex items-center gap-2";
 
@@ -323,17 +320,7 @@
             captionHeader.appendChild(selectedTag);
           }
 
-          captionContent.appendChild(captionHeader);
-
-          const captionHint = document.createElement("p");
-          captionHint.className =
-            "text-xs text-black/60 dark:text-white/60";
-          captionHint.textContent = isSelected
-            ? "To zdjęcie jest obecnie wybrane do transformacji."
-            : "Kliknij zdjęcie, aby użyć go jako źródło transformacji.";
-          captionContent.appendChild(captionHint);
-
-          captionCard.appendChild(captionContent);
+          captionCard.appendChild(captionHeader);
 
           const imageWrapper = document.createElement("figure");
           imageWrapper.className = `${
