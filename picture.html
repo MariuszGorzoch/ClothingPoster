@@ -167,6 +167,7 @@
         originalImageBlob: null,
         latestStep: null,
         previewHistory: [],
+        selectedPreviewId: null,
       };
 
       const hasRequiredParams = Boolean(productId && imageNameParam);
@@ -174,6 +175,27 @@
       let isLoading = false;
       let isTransforming = false;
       let activeTransformationKey = null;
+
+      function getSelectedPreviewEntry() {
+        const selectedId = transformationState.selectedPreviewId;
+        if (!selectedId) {
+          return null;
+        }
+
+        return (
+          transformationState.previewHistory.find((entry) => entry.id === selectedId) ?? null
+        );
+      }
+
+      function setSelectedPreview(previewId) {
+        if (transformationState.selectedPreviewId === previewId) {
+          return;
+        }
+
+        transformationState.selectedPreviewId = previewId ?? null;
+        renderPreview();
+        renderTransformationButtons();
+      }
 
       closeButton?.addEventListener("click", () => {
         const targetUrl = productId
@@ -233,12 +255,19 @@
           }
         });
         transformationState.previewHistory = [];
+        transformationState.selectedPreviewId = null;
         renderTransformationButtons();
       }
 
       function addPreviewEntry(entry) {
         const entryId = entry?.id ?? `preview-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+        const wasEmpty = transformationState.previewHistory.length === 0;
         transformationState.previewHistory.push({ ...entry, id: entryId });
+
+        if (wasEmpty && !transformationState.selectedPreviewId) {
+          transformationState.selectedPreviewId = entryId;
+        }
+
         return entryId;
       }
 
@@ -260,7 +289,11 @@
         const list = document.createElement("div");
         list.className = "space-y-6";
 
+        const selectedPreviewId = transformationState.selectedPreviewId;
+
         history.forEach((entry, index) => {
+          const isSelected = entry.id === selectedPreviewId;
+
           const layout = document.createElement("article");
           layout.className = "space-y-4";
           layout.dataset.previewEntry = entry.id;
@@ -268,13 +301,38 @@
           const captionCard = document.createElement("section");
           captionCard.className =
             "rounded-lg border border-black/10 bg-white p-4 text-sm text-black/70 shadow-sm dark:border-white/10 dark:bg-background-dark/50 dark:text-white/70";
-          captionCard.textContent = entry.isOriginal
+
+          const captionHeader = document.createElement("div");
+          captionHeader.className = "flex items-center gap-2";
+
+          const captionText = document.createElement("p");
+          captionText.className = "font-medium";
+          captionText.textContent = entry.isOriginal
             ? "Oryginalne zdjęcie"
             : entry.label ?? "Podgląd zdjęcia";
+          captionHeader.appendChild(captionText);
+
+          if (isSelected) {
+            const selectedTag = document.createElement("span");
+            selectedTag.className =
+              "inline-flex items-center justify-center rounded-full bg-primary/10 px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-primary";
+            selectedTag.textContent = "Wybrane";
+            captionHeader.appendChild(selectedTag);
+          }
+
+          captionCard.appendChild(captionHeader);
 
           const imageWrapper = document.createElement("figure");
-          imageWrapper.className =
-            "relative overflow-hidden rounded-xl border border-black/10 bg-white shadow-sm dark:border-white/10 dark:bg-background-dark/50";
+          imageWrapper.className = `${
+            "relative overflow-hidden rounded-xl border border-black/10 bg-white shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-white/10 dark:bg-background-dark/50"
+          }${
+            isSelected
+              ? " ring-2 ring-primary"
+              : " cursor-pointer hover:ring-2 hover:ring-primary/60"
+          }`;
+          imageWrapper.tabIndex = 0;
+          imageWrapper.setAttribute("role", "button");
+          imageWrapper.setAttribute("aria-pressed", isSelected ? "true" : "false");
 
           const img = document.createElement("img");
           img.src = entry.url;
@@ -291,6 +349,19 @@
           img.className =
             "h-full max-h-[70vh] w-full object-contain bg-black/5 dark:bg-black/30";
           imageWrapper.appendChild(img);
+
+          if (!isSelected) {
+            const handleSelection = () => {
+              setSelectedPreview(entry.id);
+            };
+            imageWrapper.addEventListener("click", handleSelection);
+            imageWrapper.addEventListener("keydown", (event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                handleSelection();
+              }
+            });
+          }
 
           if (isTransforming && index === history.length - 1) {
             const overlay = document.createElement("div");
@@ -395,28 +466,32 @@
           return null;
         }
 
+        const selectedEntry = getSelectedPreviewEntry();
+
+        if (!selectedEntry) {
+          throw new Error("Wybierz zdjęcie, które ma zostać przekształcone.");
+        }
+
         if (!step.dependsOnStep) {
-          if (transformationState.originalImageBlob instanceof Blob) {
-            return {
-              blob: transformationState.originalImageBlob,
-              filename:
-                transformationState.originalImageName && transformationState.originalImageName.trim()
-                  ? transformationState.originalImageName
-                  : "source.png",
-            };
+          if (!selectedEntry.isOriginal) {
+            throw new Error(
+              "Ta transformacja wymaga zaznaczenia oryginalnego zdjęcia."
+            );
           }
 
-          if (!transformationState.originalImageUrl) {
-            return null;
-          }
+          if (!(transformationState.originalImageBlob instanceof Blob)) {
+            if (!transformationState.originalImageUrl) {
+              throw new Error("Brak obrazu źródłowego do przekształcenia.");
+            }
 
-          const originalBlob = await downloadImageBlob(
-            transformationState.originalImageUrl
-          );
-          transformationState.originalImageBlob = originalBlob;
+            const originalBlob = await downloadImageBlob(
+              transformationState.originalImageUrl
+            );
+            transformationState.originalImageBlob = originalBlob;
+          }
 
           return {
-            blob: originalBlob,
+            blob: transformationState.originalImageBlob,
             filename:
               transformationState.originalImageName && transformationState.originalImageName.trim()
                 ? transformationState.originalImageName
@@ -424,27 +499,55 @@
           };
         }
 
-        const dependency = transformationCatalog[step.dependsOnStep];
+        const dependencyKey = step.dependsOnStep;
+
+        if (selectedEntry.stepKey !== dependencyKey) {
+          throw new Error(
+            "Wybrane zdjęcie nie spełnia wymagań tej transformacji."
+          );
+        }
+
+        const dependency = transformationCatalog[dependencyKey];
         if (!dependency?.blob) {
-          return null;
+          throw new Error(
+            "Brak danych obrazu dla wybranej transformacji. Wykonaj ponownie wymaganą transformację."
+          );
         }
 
         return {
           blob: dependency.blob,
-          filename: `${step.dependsOnStep}.png`,
+          filename: `${dependencyKey}.png`,
         };
       }
 
       function getAvailableTransformations() {
+        const selectedEntry = getSelectedPreviewEntry();
+        const hasOriginalSource =
+          typeof transformationState.originalImageUrl === "string" &&
+          transformationState.originalImageUrl.trim().length > 0;
+        const hasOriginalBlob = transformationState.originalImageBlob instanceof Blob;
+
         return Object.entries(transformationCatalog).filter(([, step]) => {
           if (step.image) {
             return false;
           }
-          if (step.dependsOnStep === null) {
-            return Boolean(transformationState.originalImageUrl);
+          if (!selectedEntry) {
+            return false;
           }
-          const dependencyImage =
-            transformationCatalog[step.dependsOnStep]?.image ?? null;
+
+          if (step.dependsOnStep === null) {
+            if (!hasOriginalSource && !hasOriginalBlob) {
+              return false;
+            }
+
+            return Boolean(selectedEntry.isOriginal || !selectedEntry.stepKey);
+          }
+
+          if (selectedEntry.stepKey !== step.dependsOnStep) {
+            return false;
+          }
+
+          const dependencyImage = transformationCatalog[step.dependsOnStep]?.blob ?? null;
           return Boolean(dependencyImage);
         });
       }
@@ -476,18 +579,37 @@
           return;
         }
 
+        const selectedEntry = getSelectedPreviewEntry();
+        const hasOriginalSource =
+          typeof transformationState.originalImageUrl === "string" &&
+          transformationState.originalImageUrl.trim().length > 0;
+        const hasOriginalBlob = transformationState.originalImageBlob instanceof Blob;
+
+        if (!selectedEntry) {
+          if (transformationState.previewHistory.length > 0) {
+            appendMessage(
+              "Wybierz zdjęcie, aby zobaczyć dostępne transformacje."
+            );
+          } else {
+            appendMessage(
+              "Załaduj zdjęcie produktu, aby skorzystać z transformacji."
+            );
+          }
+          return;
+        }
+
         const available = getAvailableTransformations();
 
         if (available.length === 0) {
           if (isTransforming) {
             appendMessage("Trwa przetwarzanie obrazu…");
-          } else if (!transformationState.originalImageUrl) {
+          } else if (!hasOriginalSource && !hasOriginalBlob) {
             appendMessage(
               "Załaduj zdjęcie produktu, aby skorzystać z transformacji."
             );
           } else {
             appendMessage(
-              "Wszystkie dostępne transformacje zostały zastosowane."
+              "Brak transformacji dostępnych dla wybranego zdjęcia. Wybierz inne zdjęcie lub spróbuj ponownie później."
             );
           }
           return;
@@ -592,6 +714,7 @@
             stepKey,
             isOriginal: false,
           });
+          transformationState.selectedPreviewId = entryId;
           showFeedback("Transformacja zakończona pomyślnie.", "success");
           scrollTargetId = entryId;
         } catch (error) {
