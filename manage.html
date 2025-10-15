@@ -453,6 +453,22 @@
 
     let sliderInitialized = false;
 
+    function extractImageName(imageUrl) {
+      if (typeof imageUrl !== 'string' || !imageUrl.trim()) {
+        return '';
+      }
+
+      try {
+        const url = new URL(imageUrl);
+        const pathname = url.pathname ?? '';
+        const segments = pathname.split('/').filter(Boolean);
+        return segments.length ? segments[segments.length - 1] : '';
+      } catch (error) {
+        const segments = imageUrl.split(/[\\/]/).filter(Boolean);
+        return segments.length ? segments[segments.length - 1] : '';
+      }
+    }
+
     function populateImages(images) {
       if (!slider || !indicators) {
         return;
@@ -471,8 +487,15 @@
 
       images.forEach((url, index) => {
         const slide = document.createElement('div');
-        slide.className = 'flex-shrink-0 w-full h-full snap-center bg-cover bg-center';
+        slide.className = 'flex-shrink-0 w-full h-full snap-center bg-cover bg-center cursor-pointer';
         slide.style.backgroundImage = `url("${url}")`;
+        slide.addEventListener('click', () => {
+          const imageName = extractImageName(url);
+          const query = new URLSearchParams();
+          query.set('productId', productId);
+          query.set('imageName', imageName);
+          window.location.href = `picture.html?${query.toString()}`;
+        });
         slider.appendChild(slide);
 
         const indicator = document.createElement('div');
