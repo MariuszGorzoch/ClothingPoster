@@ -303,54 +303,49 @@
             "rounded-lg border border-black/10 bg-white p-4 text-sm text-black/70 shadow-sm dark:border-white/10 dark:bg-background-dark/50 dark:text-white/70";
 
           const captionContent = document.createElement("div");
-          captionContent.className =
-            "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between";
+          captionContent.className = "space-y-2";
+
+          const captionHeader = document.createElement("div");
+          captionHeader.className = "flex items-center gap-2";
 
           const captionText = document.createElement("p");
           captionText.className = "font-medium";
           captionText.textContent = entry.isOriginal
             ? "Oryginalne zdjęcie"
             : entry.label ?? "Podgląd zdjęcia";
-          captionContent.appendChild(captionText);
-
-          const selectButton = document.createElement("button");
-          selectButton.type = "button";
-          selectButton.dataset.previewSelection = entry.id;
-
-          const baseSelectButtonClasses =
-            "inline-flex items-center justify-center gap-1 rounded-full border px-3 py-1 text-xs font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
-
-          if (isSelected) {
-            selectButton.className =
-              `${baseSelectButtonClasses} border-primary bg-primary text-white`;
-            selectButton.textContent = "Wybrane zdjęcie";
-            selectButton.disabled = true;
-            selectButton.setAttribute("aria-pressed", "true");
-          } else {
-            selectButton.className =
-              `${baseSelectButtonClasses} border-black/10 bg-white text-black/70 hover:border-primary/60 hover:text-primary dark:border-white/20 dark:bg-background-dark/60 dark:text-white/70 dark:hover:border-primary/60`;
-            selectButton.textContent = "Użyj tego zdjęcia";
-            selectButton.setAttribute("aria-pressed", "false");
-            selectButton.addEventListener("click", () => {
-              setSelectedPreview(entry.id);
-            });
-          }
+          captionHeader.appendChild(captionText);
 
           if (isSelected) {
             const selectedTag = document.createElement("span");
             selectedTag.className =
               "inline-flex items-center justify-center rounded-full bg-primary/10 px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-primary";
             selectedTag.textContent = "Wybrane";
-            captionContent.appendChild(selectedTag);
+            captionHeader.appendChild(selectedTag);
           }
 
-          captionContent.appendChild(selectButton);
+          captionContent.appendChild(captionHeader);
+
+          const captionHint = document.createElement("p");
+          captionHint.className =
+            "text-xs text-black/60 dark:text-white/60";
+          captionHint.textContent = isSelected
+            ? "To zdjęcie jest obecnie wybrane do transformacji."
+            : "Kliknij zdjęcie, aby użyć go jako źródło transformacji.";
+          captionContent.appendChild(captionHint);
+
           captionCard.appendChild(captionContent);
 
           const imageWrapper = document.createElement("figure");
           imageWrapper.className = `${
-            "relative overflow-hidden rounded-xl border border-black/10 bg-white shadow-sm dark:border-white/10 dark:bg-background-dark/50"
-          }${isSelected ? " ring-2 ring-primary" : ""}`;
+            "relative overflow-hidden rounded-xl border border-black/10 bg-white shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-white/10 dark:bg-background-dark/50"
+          }${
+            isSelected
+              ? " ring-2 ring-primary"
+              : " cursor-pointer hover:ring-2 hover:ring-primary/60"
+          }`;
+          imageWrapper.tabIndex = 0;
+          imageWrapper.setAttribute("role", "button");
+          imageWrapper.setAttribute("aria-pressed", isSelected ? "true" : "false");
 
           const img = document.createElement("img");
           img.src = entry.url;
@@ -367,6 +362,19 @@
           img.className =
             "h-full max-h-[70vh] w-full object-contain bg-black/5 dark:bg-black/30";
           imageWrapper.appendChild(img);
+
+          if (!isSelected) {
+            const handleSelection = () => {
+              setSelectedPreview(entry.id);
+            };
+            imageWrapper.addEventListener("click", handleSelection);
+            imageWrapper.addEventListener("keydown", (event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                handleSelection();
+              }
+            });
+          }
 
           if (isTransforming && index === history.length - 1) {
             const overlay = document.createElement("div");
