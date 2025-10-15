@@ -168,6 +168,7 @@
         originalImageName: imageNameParam ?? "",
         originalImageBlob: null,
         latestStep: null,
+        previewHistory: [],
       };
 
       const hasRequiredParams = Boolean(productId && imageNameParam);
@@ -205,7 +206,8 @@
         document.title = "Podgląd zdjęcia produktu";
         pictureContainer.innerHTML = "";
         const card = document.createElement("div");
-        card.className = "rounded-lg border border-black/10 bg-white p-4 text-gray-600 shadow-sm dark:border-white/10 dark:bg-background-dark/50 dark:text-gray-300";
+        card.className =
+          "rounded-lg border border-black/10 bg-white p-4 text-gray-600 shadow-sm dark:border-white/10 dark:bg-background-dark/50 dark:text-gray-300";
         card.textContent = message;
         pictureContainer.appendChild(card);
       }
@@ -220,34 +222,25 @@
         });
         transformationState.latestStep = null;
         activeTransformationKey = null;
+        transformationState.previewHistory.forEach((entry) => {
+          if (entry?.url && typeof entry.url === "string" && entry.url.startsWith("blob:")) {
+            URL.revokeObjectURL(entry.url);
+          }
+        });
+        transformationState.previewHistory = [];
         renderTransformationButtons();
       }
 
-      function getCurrentPreviewInfo() {
-        if (transformationState.latestStep) {
-          const latest = transformationCatalog[transformationState.latestStep];
-          if (latest?.image) {
-            return {
-              url: latest.image,
-              label: latest.label,
-            };
-          }
-        }
-
-        if (transformationState.originalImageUrl) {
-          return {
-            url: transformationState.originalImageUrl,
-            label: null,
-          };
-        }
-
-        return null;
+      function addPreviewEntry(entry) {
+        const entryId = entry?.id ?? `preview-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+        transformationState.previewHistory.push({ ...entry, id: entryId });
+        return entryId;
       }
 
-      function renderPreview() {
-        const preview = getCurrentPreviewInfo();
+      function renderPreview(scrollTargetId = null) {
+        const history = transformationState.previewHistory;
 
-        if (!preview) {
+        if (!history.length) {
           renderPlaceholder("Nie znaleziono zdjęcia o podanej nazwie.");
           return;
         }
@@ -259,47 +252,75 @@
 
         pictureContainer.innerHTML = "";
 
-        const layout = document.createElement("div");
-        layout.className = "space-y-4";
+        const list = document.createElement("div");
+        list.className = "space-y-6";
 
-        const imageWrapper = document.createElement("figure");
-        imageWrapper.className =
-          "relative overflow-hidden rounded-xl border border-black/10 bg-white shadow-sm dark:border-white/10 dark:bg-background-dark/50";
+        history.forEach((entry, index) => {
+          const layout = document.createElement("article");
+          layout.className = "space-y-4";
+          layout.dataset.previewEntry = entry.id;
 
-        const img = document.createElement("img");
-        img.src = preview.url;
-        const descriptionSuffix = preview.label ? ` (${preview.label.toLowerCase()})` : "";
-        img.alt = imageName
-          ? `Zdjęcie ${imageName}${descriptionSuffix}`
-          : "Zdjęcie produktu";
-        img.className =
-          "h-full max-h-[70vh] w-full object-contain bg-black/5 dark:bg-black/30";
-        imageWrapper.appendChild(img);
+          const imageWrapper = document.createElement("figure");
+          imageWrapper.className =
+            "relative overflow-hidden rounded-xl border border-black/10 bg-white shadow-sm dark:border-white/10 dark:bg-background-dark/50";
 
-        if (isTransforming) {
-          const overlay = document.createElement("div");
-          overlay.className =
-            "absolute inset-0 flex items-center justify-center bg-black/40 text-sm font-semibold uppercase tracking-wide text-white";
-          overlay.textContent = "Trwa przetwarzanie…";
-          imageWrapper.appendChild(overlay);
+          const img = document.createElement("img");
+          img.src = entry.url;
+          const descriptionSuffix = entry.label
+            ? ` (${entry.label.toLowerCase()})`
+            : entry.isOriginal
+              ? " (oryginalne)"
+              : "";
+          img.alt = imageName
+            ? `Zdjęcie ${imageName}${descriptionSuffix}`
+            : entry.label
+              ? `Zdjęcie produktu (${entry.label.toLowerCase()})`
+              : "Zdjęcie produktu";
+          img.className =
+            "h-full max-h-[70vh] w-full object-contain bg-black/5 dark:bg-black/30";
+          imageWrapper.appendChild(img);
+
+          if (isTransforming && index === history.length - 1) {
+            const overlay = document.createElement("div");
+            overlay.className =
+              "absolute inset-0 flex items-center justify-center bg-black/40 text-sm font-semibold uppercase tracking-wide text-white";
+            overlay.textContent = "Trwa przetwarzanie…";
+            imageWrapper.appendChild(overlay);
+          }
+
+          const captionCard = document.createElement("section");
+          captionCard.className =
+            "rounded-lg border border-black/10 bg-white p-4 text-sm text-black/70 shadow-sm dark:border-white/10 dark:bg-background-dark/50 dark:text-white/70";
+          const captionParts = [];
+          captionParts.push(
+            imageName
+              ? `Wyświetlane zdjęcie: ${imageName}`
+              : "Wyświetlane zdjęcie produktu"
+          );
+          if (entry.label) {
+            captionParts.push(`Transformacja: ${entry.label}`);
+          } else if (entry.isOriginal) {
+            captionParts.push("Oryginalne zdjęcie");
+          }
+          captionCard.textContent = captionParts.join(" \u2022 ");
+
+          layout.appendChild(imageWrapper);
+          layout.appendChild(captionCard);
+          list.appendChild(layout);
+        });
+
+        pictureContainer.appendChild(list);
+
+        if (scrollTargetId) {
+          const target = pictureContainer.querySelector(
+            `[data-preview-entry="${scrollTargetId}"]`
+          );
+          if (target) {
+            requestAnimationFrame(() => {
+              target.scrollIntoView({ behavior: "smooth", block: "start" });
+            });
+          }
         }
-
-        const captionCard = document.createElement("section");
-        captionCard.className =
-          "rounded-lg border border-black/10 bg-white p-4 text-sm text-black/70 shadow-sm dark:border-white/10 dark:bg-background-dark/50 dark:text-white/70";
-        const captionParts = [];
-        captionParts.push(
-          imageName ? `Wyświetlane zdjęcie: ${imageName}` : "Wyświetlane zdjęcie produktu"
-        );
-        if (preview.label) {
-          captionParts.push(`Transformacja: ${preview.label}`);
-        }
-        captionCard.textContent = captionParts.join(" \u2022 ");
-
-        layout.appendChild(imageWrapper);
-        layout.appendChild(captionCard);
-
-        pictureContainer.appendChild(layout);
       }
 
       function extractMatchingImage(images, imageName) {
@@ -506,6 +527,7 @@
         renderPreview();
 
         let source;
+        let scrollTargetId = null;
 
         try {
           source = await resolveSourceForStep(stepKey);
@@ -553,9 +575,14 @@
           step.image = objectUrl;
           step.blob = resultBlob;
           transformationState.latestStep = stepKey;
-
-          renderPreview();
+          const entryId = addPreviewEntry({
+            url: objectUrl,
+            label: step.label,
+            stepKey,
+            isOriginal: false,
+          });
           showFeedback("Transformacja zakończona pomyślnie.", "success");
+          scrollTargetId = entryId;
         } catch (error) {
           console.error(error);
           showFeedback(
@@ -566,7 +593,7 @@
           isTransforming = false;
           activeTransformationKey = null;
           renderTransformationButtons();
-          renderPreview();
+          renderPreview(scrollTargetId);
         }
       }
 
@@ -597,7 +624,13 @@
           resetTransformations();
 
           if (matchedImageUrl) {
-            renderPreview();
+            const entryId = addPreviewEntry({
+              url: matchedImageUrl,
+              label: null,
+              stepKey: null,
+              isOriginal: true,
+            });
+            renderPreview(entryId);
           } else {
             renderPlaceholder(
               "Nie znaleziono zdjęcia o podanej nazwie w bibliotece produktu."
