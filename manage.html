@@ -53,14 +53,11 @@
       box-shadow: none;
     }
   </style>
-<style>
-    body {
-      min-height: max(884px, 100dvh);
-    }
-  </style>
+<link href="layout.css" rel="stylesheet"/>
   </head>
 <body class="bg-background-light dark:bg-background-dark font-display">
-<div class="flex flex-col min-h-screen">
+<div class="page-shell">
+<div class="page-content">
 <header class="sticky top-0 bg-background-light dark:bg-background-dark/80 backdrop-blur-sm z-10 px-4 pt-6 pb-4">
   <div class="flex items-center justify-between gap-4">
     <h1 class="text-2xl font-bold text-black dark:text-white">Zarządzaj produktem</h1>
@@ -74,7 +71,7 @@
     </button>
   </div>
 </header>
-<main class="flex-grow">
+<main>
 <div class="w-full px-4 py-6">
 <div class="relative aspect-[3/4] w-full rounded-xl overflow-hidden mb-6">
 <div class="absolute inset-0 flex overflow-x-auto snap-x snap-mandatory" id="image-slider"></div>
@@ -216,7 +213,8 @@
 </div>
 </div>
 </main>
-<footer class="sticky bottom-0 bg-background-light dark:bg-background-dark/80 backdrop-blur-sm border-t border-black/10 dark:border-white/10">
+</div>
+<footer class="page-footer bg-background-light dark:bg-background-dark/80 backdrop-blur-sm border-t border-black/10 dark:border-white/10">
   <nav class="flex justify-around items-center h-16 px-2">
     <button class="flex flex-col items-center justify-center gap-1 p-0 text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" id="save-product" type="button">
       <span class="material-symbols-outlined text-2xl leading-none">save</span>
@@ -239,7 +237,7 @@
       <span class="text-xs font-medium">Usuń</span>
     </button>
   </nav>
-  <div class="pb-safe"></div>
+  <div class="page-footer-safe pb-safe"></div>
 </footer>
 </div>
 
