@@ -23,6 +23,7 @@
     />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script defer src="pwa.js"></script>
+    <link href="layout.css" rel="stylesheet" />
     <script>
       tailwind.config = {
         darkMode: "class",
@@ -46,15 +47,10 @@
         },
       };
     </script>
-    <style>
-      body {
-        min-height: max(884px, 100dvh);
-      }
-    </style>
   </head>
   <body class="bg-background-light dark:bg-background-dark font-display">
-    <div class="flex h-screen flex-col justify-between">
-      <div class="flex-grow overflow-y-auto">
+    <div class="page-shell">
+      <div class="page-content">
         <header
           class="sticky top-0 z-10 bg-background-light px-4 pb-4 pt-6 backdrop-blur-sm dark:bg-background-dark/80"
         >
@@ -90,7 +86,7 @@
         </main>
       </div>
       <footer
-        class="sticky bottom-0 border-t border-black/10 bg-background-light backdrop-blur-sm dark:border-white/10 dark:bg-background-dark/80"
+        class="page-footer border-t border-black/10 bg-background-light backdrop-blur-sm dark:border-white/10 dark:bg-background-dark/80"
       >
         <nav
           aria-label="Dostępne transformacje"
@@ -102,7 +98,7 @@
             role="group"
           ></div>
         </nav>
-        <div class="pb-safe"></div>
+        <div class="page-footer-safe pb-safe"></div>
       </footer>
     </div>
     <script>

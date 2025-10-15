@@ -1,0 +1,28 @@
+:root {
+  --page-min-height: max(884px, 100dvh);
+}
+
+body {
+  min-height: var(--page-min-height);
+}
+
+.page-shell {
+  min-height: var(--page-min-height);
+  display: flex;
+  flex-direction: column;
+}
+
+.page-content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+}
+
+.page-footer {
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+}
+
+.page-footer-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
