@@ -556,7 +556,7 @@
           formData.append("file", blob, filename);
 
           const response = await fetch(
-            `https://localhost:7168/products/${encodeURIComponent(productId)}/images/add`,
+            `https://clothingposterappservice-ada8b4eahpfxbrd6.polandcentral-01.azurewebsites.net/products/${encodeURIComponent(productId)}/images/add`,
             {
               method: "POST",
               body: formData,
