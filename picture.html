@@ -129,7 +129,6 @@
         },
         placeOnMannequin: {
           label: "Manekin",
-          dependsOnStep: "removeBackground",
           image: null,
           blob: null,
           prompt:
@@ -137,7 +136,6 @@
         },
         addOnDoors: {
           label: "Drzwi",
-          dependsOnStep: "removeBackground",
           image: null,
           blob: null,
           prompt:
@@ -145,12 +143,11 @@
         },
         buyerEffect: {
           label: "Sprzedaz",
-          dependsOnStep: "removeBackground",
           image: null,
           blob: null,
           prompt:
             "Place the provided product image (with background already removed) in an elegant, bright, and stylish setting designed to appeal to women aged 30–50. Choose a background and lighting that highlight the product’s color, shape, and texture, making it look premium and desirable. Position the product front and center with perfect proportions — no stretching or warping — and ensure it looks naturally placed in the scene. Use soft, warm lighting to create a welcoming and sophisticated atmosphere. Add subtle shadows and highlights to enhance the product’s contours and make it stand out. The background should be tasteful, modern, and minimalistic, with complementary colors that elevate the product without overpowering it. Ensure clean, smooth edges and a balanced composition. Avoid clutter, logos, or distracting elements. The overall look should feel aspirational, feminine, elegant, and trustworthy — encouraging the viewer to imagine owning and wearing the product",
-        },        
+        },
       };
 
       const transformationIconMap = {
@@ -426,14 +423,6 @@
             : entry.label ?? "Podgląd zdjęcia";
           captionHeader.appendChild(captionText);
 
-          if (isSelected) {
-            const selectedTag = document.createElement("span");
-            selectedTag.className =
-              "inline-flex items-center justify-center rounded-full bg-primary/10 px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-primary";
-            selectedTag.textContent = "Wybrane";
-            captionHeader.appendChild(selectedTag);
-          }
-
           captionCard.appendChild(captionHeader);
 
           const imageWrapper = document.createElement("figure");
@@ -586,62 +575,83 @@
           throw new Error("Wybierz zdjęcie, które ma zostać przekształcone.");
         }
 
-        if (!step.dependsOnStep) {
-          if (selectedEntry.isOriginal) {
-            if (!(transformationState.originalImageBlob instanceof Blob)) {
-              if (!transformationState.originalImageUrl) {
-                throw new Error("Brak obrazu źródłowego do przekształcenia.");
-              }
+        const resolveFilename = () => {
+          const candidates = [
+            selectedEntry.filename,
+            transformationState.originalImageName,
+            stepKey ? `${stepKey}.png` : null,
+          ];
+          const match = candidates.find(
+            (name) => typeof name === "string" && name.trim().length > 0
+          );
+          return match ?? "source.png";
+        };
 
-              const originalBlob = await downloadImageBlob(
-                transformationState.originalImageUrl
-              );
-              transformationState.originalImageBlob = originalBlob;
+        if (selectedEntry.isOriginal) {
+          if (!(transformationState.originalImageBlob instanceof Blob)) {
+            if (!transformationState.originalImageUrl) {
+              throw new Error("Brak obrazu źródłowego do przekształcenia.");
             }
 
-            return {
-              blob: transformationState.originalImageBlob,
-              filename:
-                transformationState.originalImageName && transformationState.originalImageName.trim()
-                  ? transformationState.originalImageName
-                  : "source.png",
-            };
+            const originalBlob = await downloadImageBlob(
+              transformationState.originalImageUrl
+            );
+            transformationState.originalImageBlob = originalBlob;
           }
 
-          if (selectedEntry.blob instanceof Blob) {
+          const filename = resolveFilename();
+          if (!selectedEntry.filename || !selectedEntry.filename.trim()) {
+            selectedEntry.filename = filename;
+          }
+          selectedEntry.blob = transformationState.originalImageBlob;
+
+          return {
+            blob: transformationState.originalImageBlob,
+            filename,
+          };
+        }
+
+        if (selectedEntry.blob instanceof Blob) {
+          const filename = resolveFilename();
+          if (!selectedEntry.filename || !selectedEntry.filename.trim()) {
+            selectedEntry.filename = filename;
+          }
+          return {
+            blob: selectedEntry.blob,
+            filename,
+          };
+        }
+
+        if (selectedEntry.stepKey) {
+          const catalogEntry = transformationCatalog[selectedEntry.stepKey];
+          if (catalogEntry?.blob instanceof Blob) {
+            const filename = resolveFilename();
+            if (!selectedEntry.filename || !selectedEntry.filename.trim()) {
+              selectedEntry.filename = filename;
+            }
+            selectedEntry.blob = catalogEntry.blob;
             return {
-              blob: selectedEntry.blob,
-              filename:
-                selectedEntry.filename && selectedEntry.filename.trim()
-                  ? selectedEntry.filename
-                  : "source.png",
+              blob: catalogEntry.blob,
+              filename,
             };
           }
-
-          throw new Error(
-            "Ta transformacja wymaga zaznaczenia oryginalnego zdjęcia."
-          );
         }
 
-        const dependencyKey = step.dependsOnStep;
+        if (selectedEntry.url) {
+          const downloadedBlob = await downloadImageBlob(selectedEntry.url);
+          const filename = resolveFilename();
+          selectedEntry.blob = downloadedBlob;
+          if (!selectedEntry.filename || !selectedEntry.filename.trim()) {
+            selectedEntry.filename = filename;
+          }
 
-        if (selectedEntry.stepKey !== dependencyKey) {
-          throw new Error(
-            "Wybrane zdjęcie nie spełnia wymagań tej transformacji."
-          );
+          return {
+            blob: downloadedBlob,
+            filename,
+          };
         }
 
-        const dependency = transformationCatalog[dependencyKey];
-        if (!dependency?.blob) {
-          throw new Error(
-            "Brak danych obrazu dla wybranej transformacji. Wykonaj ponownie wymaganą transformację."
-          );
-        }
-
-        return {
-          blob: dependency.blob,
-          filename: `${dependencyKey}.png`,
-        };
+        throw new Error("Brak obrazu źródłowego do przekształcenia.");
       }
 
       function getAvailableTransformations() {
@@ -659,20 +669,18 @@
             return false;
           }
 
-          if (step.dependsOnStep === null) {
-            if (!hasOriginalSource && !hasOriginalBlob) {
-              return false;
-            }
-
-            return Boolean(selectedEntry.isOriginal || !selectedEntry.stepKey);
+          if (selectedEntry.isOriginal) {
+            return hasOriginalSource || hasOriginalBlob;
           }
 
-          if (selectedEntry.stepKey !== step.dependsOnStep) {
-            return false;
+          if (selectedEntry.blob instanceof Blob) {
+            return true;
           }
 
-          const dependencyImage = transformationCatalog[step.dependsOnStep]?.blob ?? null;
-          return Boolean(dependencyImage);
+          return Boolean(
+            typeof selectedEntry.url === "string" &&
+              selectedEntry.url.trim().length > 0
+          );
         });
       }
 
@@ -741,7 +749,7 @@
         rotationLabel.className = "text-xs font-medium";
         rotationLabel.textContent = isRotating
           ? "Obracanie…"
-          : "Obróć +90°";
+          : "Obróć";
         rotationButton.appendChild(rotationLabel);
 
         rotationButton.addEventListener("click", () => {
@@ -859,6 +867,13 @@
 
           const resultBlob = await response.blob();
           const objectUrl = URL.createObjectURL(resultBlob);
+          const filename =
+            source.filename && source.filename.trim().length > 0
+              ? source.filename
+              : transformationState.originalImageName &&
+                  transformationState.originalImageName.trim().length > 0
+                ? transformationState.originalImageName
+                : `${stepKey}.png`;
           step.image = objectUrl;
           step.blob = resultBlob;
           transformationState.latestStep = stepKey;
@@ -867,6 +882,8 @@
             label: step.label,
             stepKey,
             isOriginal: false,
+            blob: resultBlob,
+            filename,
           });
           transformationState.selectedPreviewId = entryId;
           showFeedback("Transformacja zakończona pomyślnie.", "success");
