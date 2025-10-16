@@ -166,6 +166,34 @@
       };
 
       const storedImageSignatures = new Set();
+      let derivedFilenameCounter = 0;
+
+      function sanitizeFilenamePart(value, fallback) {
+        if (typeof value !== "string") {
+          return fallback;
+        }
+
+        const normalized = value
+          .trim()
+          .toLowerCase()
+          .replace(/\.[^.]+$/, "")
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "");
+
+        return normalized || fallback;
+      }
+
+      function buildDerivedFilename(stepKey) {
+        const base = sanitizeFilenamePart(
+          transformationState.originalImageName ?? "",
+          "image"
+        );
+        const stepPart = sanitizeFilenamePart(stepKey ?? "preview", "preview");
+
+        derivedFilenameCounter += 1;
+
+        return `${base}-${stepPart}-${derivedFilenameCounter}.png`;
+      }
 
       const hasRequiredParams = Boolean(productId && imageNameParam);
 
@@ -1062,13 +1090,7 @@
 
           const resultBlob = await response.blob();
           const objectUrl = URL.createObjectURL(resultBlob);
-          const filename =
-            source.filename && source.filename.trim().length > 0
-              ? source.filename
-              : transformationState.originalImageName &&
-                  transformationState.originalImageName.trim().length > 0
-                ? transformationState.originalImageName
-                : `${stepKey}.png`;
+          const filename = buildDerivedFilename(stepKey);
           step.image = objectUrl;
           step.blob = resultBlob;
           transformationState.latestStep = stepKey;
