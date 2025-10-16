@@ -330,22 +330,48 @@
           });
 
           const objectUrl = URL.createObjectURL(rotatedBlob);
-          const entryId = addPreviewEntry({
-            url: objectUrl,
-            label: "Obrócono +90°",
-            stepKey: null,
-            isOriginal: false,
-            blob: rotatedBlob,
-            filename:
-              selectedEntry.filename?.trim()
-                ? selectedEntry.filename
-                : transformationState.originalImageName?.trim()
-                  ? `rotated-${transformationState.originalImageName}`
-                  : "rotated-image.png",
-          });
 
-          transformationState.selectedPreviewId = entryId;
-          renderPreview(entryId);
+          if (
+            selectedEntry.url &&
+            typeof selectedEntry.url === "string" &&
+            selectedEntry.url.startsWith("blob:") &&
+            selectedEntry.url !== objectUrl
+          ) {
+            URL.revokeObjectURL(selectedEntry.url);
+          }
+
+          selectedEntry.url = objectUrl;
+          selectedEntry.blob = rotatedBlob;
+
+          const filenameSource = selectedEntry.filename?.trim()
+            ? selectedEntry.filename
+            : transformationState.originalImageName?.trim()
+              ? transformationState.originalImageName
+              : "image.png";
+          selectedEntry.filename = filenameSource;
+
+          if (selectedEntry.isOriginal) {
+            transformationState.originalImageUrl = objectUrl;
+            transformationState.originalImageBlob = rotatedBlob;
+          }
+
+          if (selectedEntry.stepKey) {
+            const step = transformationCatalog[selectedEntry.stepKey];
+            if (step) {
+              if (
+                step.image &&
+                typeof step.image === "string" &&
+                step.image.startsWith("blob:") &&
+                step.image !== objectUrl
+              ) {
+                URL.revokeObjectURL(step.image);
+              }
+              step.image = objectUrl;
+              step.blob = rotatedBlob;
+            }
+          }
+
+          renderPreview(selectedEntry.id ?? null);
           showFeedback("Zdjęcie obrócono pomyślnie.", "success");
         } catch (error) {
           console.error(error);
