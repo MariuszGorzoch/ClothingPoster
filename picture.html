@@ -221,16 +221,14 @@
           return;
         }
 
-        const styles = {
-          info: "border-primary/40 bg-primary/10 text-primary",
-          success: "border-green-500/50 bg-green-500/10 text-green-700 dark:text-green-400",
-          error: "border-red-500/40 bg-red-500/10 text-red-600 dark:text-red-400",
-        };
+        if (type !== "error") {
+          clearFeedback();
+          return;
+        }
 
         feedbackElement.textContent = message;
-        feedbackElement.className = `mb-4 rounded-lg border px-4 py-3 text-sm ${
-          styles[type] ?? styles.info
-        }`;
+        feedbackElement.className =
+          "mb-4 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-600 dark:text-red-400";
       }
 
       function clearFeedback() {
@@ -293,7 +291,6 @@
         try {
           isRotating = true;
           renderTransformationButtons();
-          showFeedback("Trwa obracanie zdjęcia…", "info");
 
           const imageElement = await loadImageElement(selectedEntry.url);
           const width = imageElement.naturalWidth || imageElement.width;
@@ -369,7 +366,6 @@
           }
 
           renderPreview(selectedEntry.id ?? null);
-          showFeedback("Zdjęcie obrócono pomyślnie.", "success");
         } catch (error) {
           console.error(error);
           showFeedback(
@@ -747,9 +743,7 @@
 
         const rotationLabel = document.createElement("span");
         rotationLabel.className = "text-xs font-medium";
-        rotationLabel.textContent = isRotating
-          ? "Obracanie…"
-          : "Obróć";
+        rotationLabel.textContent = "Obróć";
         rotationButton.appendChild(rotationLabel);
 
         rotationButton.addEventListener("click", () => {
@@ -791,12 +785,7 @@
 
           const labelSpan = document.createElement("span");
           labelSpan.className = "text-xs font-medium";
-          labelSpan.textContent =
-            isTransforming && activeTransformationKey === key
-              ? "Przetwarzanie…"
-              : isBusy
-                ? "Przetwarzanie…"
-                : step.label;
+          labelSpan.textContent = step.label ?? "Transformacja";
           button.appendChild(labelSpan);
 
           button.addEventListener("click", () => {
@@ -843,8 +832,6 @@
         }
 
         try {
-          showFeedback("Trwa przetwarzanie obrazu…", "info");
-
           const formData = new FormData();
           formData.append("prompt", step.prompt);
           formData.append(
@@ -886,7 +873,6 @@
             filename,
           });
           transformationState.selectedPreviewId = entryId;
-          showFeedback("Transformacja zakończona pomyślnie.", "success");
           scrollTargetId = entryId;
         } catch (error) {
           console.error(error);
