@@ -1,138 +1,198 @@
 <!DOCTYPE html>
-<html lang="pl">
-  <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <meta content="yes" name="apple-mobile-web-app-capable" />
-    <meta content="default" name="apple-mobile-web-app-status-bar-style" />
-    <meta content="yes" name="mobile-web-app-capable" />
-    <meta content="yes" name="apple-touch-fullscreen" />
-    <meta content="Matematyczny Labirynt" name="apple-mobile-web-app-title" />
-    <link href="manifest.webmanifest" rel="manifest" />
-    <link href="MoniTTa.jpg" rel="apple-touch-icon" />
-    <title>Matematyczny Labirynt</title>
-    <link href="https://fonts.googleapis.com" rel="preconnect" />
-    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link href="layout.css" rel="stylesheet" />
-  </head>
-  <body class="labyrinth-page">
-    <div class="labyrinth-shell">
-      <header class="labyrinth-header">
-        <div>
-          <p class="labyrinth-eyebrow">Mnożenie i dzielenie w zakresie 0 - 30</p>
-          <h1>Uzupełnij labirynt</h1>
-          <p class="labyrinth-subtitle">
-            Kliknij w puste pola i wpisz brakujące liczby tak, aby równania
-            poziome i pionowe były prawdziwe.
-          </p>
-        </div>
-      </header>
-      <main class="labyrinth-main">
-        <section class="labyrinth-board" aria-label="Labirynt matematyczny">
-          <div class="labyrinth-grid" id="labyrinth-grid"></div>
-        </section>
-        <p class="labyrinth-hint">
-          Wskazówka: w każdej kratce wpisz tylko liczbę od 0 do 30.
-        </p>
-      </main>
-    </div>
-
-    <script>
-      const grid = Array.from({ length: 13 }, () => Array(13).fill(null));
-
-      const setCell = (row, col, value) => {
-        grid[row][col] = value;
-      };
-
-      setCell(1, 1, "10");
-      setCell(1, 2, "•");
-      setCell(1, 3, { answer: "3" });
-      setCell(1, 4, "=");
-      setCell(1, 5, "30");
-
-      setCell(2, 1, "=");
-      setCell(3, 1, "5");
-      setCell(4, 1, "•");
-      setCell(5, 1, "2");
-
-      setCell(3, 3, "6");
-      setCell(3, 4, "•");
-      setCell(3, 5, { answer: "4" });
-      setCell(3, 6, "=");
-      setCell(3, 7, "24");
-
-      setCell(4, 7, ":");
-      setCell(5, 7, "6");
-      setCell(6, 7, "=");
-      setCell(7, 7, { answer: "4" });
-
-      setCell(7, 4, "20");
-      setCell(7, 5, "8");
-      setCell(7, 6, "=");
-      setCell(7, 8, "•");
-      setCell(7, 9, "2");
-
-      setCell(8, 4, ":");
-
-      setCell(9, 2, "30");
-      setCell(9, 3, ":");
-      setCell(9, 4, { answer: "5" });
-      setCell(9, 5, "=");
-      setCell(9, 6, "6");
-
-      setCell(10, 4, "=");
-      setCell(11, 4, "4");
-
-      setCell(8, 9, "•");
-      setCell(9, 9, { answer: "3" });
-      setCell(10, 9, "=");
-      setCell(11, 9, "6");
-
-      const gridElement = document.getElementById("labyrinth-grid");
-
-      const sanitizeValue = (value) => value.replace(/\D/g, "").slice(0, 2);
-
-      grid.forEach((row, rowIndex) => {
-        row.forEach((cell, colIndex) => {
-          const cellElement = document.createElement("div");
-          cellElement.className = "labyrinth-cell";
-          cellElement.style.gridRow = rowIndex + 1;
-          cellElement.style.gridColumn = colIndex + 1;
-
-          if (cell === null) {
-            cellElement.classList.add("labyrinth-cell--empty");
-          } else if (typeof cell === "object" && cell.answer) {
-            cellElement.classList.add("labyrinth-cell--input");
-            const input = document.createElement("input");
-            input.type = "text";
-            input.inputMode = "numeric";
-            input.autocomplete = "off";
-            input.setAttribute("aria-label", "Wpisz liczbę");
-            input.dataset.answer = cell.answer;
-            input.addEventListener("input", (event) => {
-              const target = event.target;
-              target.value = sanitizeValue(target.value);
-              const isCorrect =
-                target.value.length > 0 &&
-                target.value === target.dataset.answer;
-              cellElement.classList.toggle("labyrinth-cell--correct", isCorrect);
-              cellElement.classList.toggle(
-                "labyrinth-cell--incorrect",
-                target.value.length > 0 && !isCorrect
-              );
-            });
-            cellElement.appendChild(input);
-          } else {
-            cellElement.textContent = cell;
-          }
-
-          gridElement.appendChild(cellElement);
-        });
-      });
+<html lang="pl"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="yes" name="apple-mobile-web-app-capable"/>
+<meta content="default" name="apple-mobile-web-app-status-bar-style"/>
+<meta content="yes" name="mobile-web-app-capable"/>
+<meta content="yes" name="apple-touch-fullscreen"/>
+<meta content="Clothing Poster" name="apple-mobile-web-app-title"/>
+<link href="manifest.webmanifest" rel="manifest"/>
+<link href="MoniTTa.jpg" rel="apple-touch-icon"/>
+<title>Clothing Poster</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script defer src="pwa.js"></script>
+<link href="layout.css" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1173d4",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
     </script>
-  </body>
-</html>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="page-shell">
+<div class="page-content">
+<header class="sticky top-0 bg-background-light dark:bg-background-dark/80 backdrop-blur-sm z-10 px-4 pt-6 pb-4">
+<div class="flex items-center justify-between">
+<h1 class="text-2xl font-bold text-black dark:text-white">Produkty</h1>
+</div>
+</header>
+<main class="px-4 pb-4">
+<div class="space-y-3" id="product-list" role="list"></div>
+</main>
+</div>
+<footer class="page-footer bg-background-light dark:bg-background-dark/80 backdrop-blur-sm border-t border-black/10 dark:border-white/10">
+<nav class="flex justify-around items-center h-16">
+      <a class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="add.html">
+        <span aria-hidden="true" class="material-symbols-outlined text-2xl leading-none">add_box</span>
+        <span class="text-xs font-medium">Utwórz</span>
+      </a>
+      <a class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="vintage.html">
+        <span aria-hidden="true" class="material-symbols-outlined text-2xl leading-none">download</span>
+        <span class="text-xs font-medium">Importuj</span>
+      </a>
+      <button class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" id="refresh-products" type="button">
+        <span aria-hidden="true" class="material-symbols-outlined text-2xl leading-none">refresh</span>
+        <span class="text-xs font-medium">Odśwież</span>
+      </button>
+      <a class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="jobs.html">
+        <span aria-hidden="true" class="material-symbols-outlined text-2xl leading-none">work</span>
+        <span class="text-xs font-medium">Zadania</span>
+      </a>
+      <a class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+        <span aria-hidden="true" class="material-symbols-outlined text-2xl leading-none">settings</span>
+        <span class="text-xs font-medium">Ustawienia</span>
+      </a>
+</nav>
+<div class="page-footer-safe pb-safe"></div>
+</footer>
+</div>
+
+</div>
+
+<script>
+  const productListElement = document.getElementById("product-list");
+
+  function renderProductCard(product) {
+    const card = document.createElement("div");
+    card.className = [
+      "p-3",
+      "rounded-lg",
+      "flex",
+      "items-center",
+      "gap-4",
+      "transition-colors",
+      "border",
+      "border-transparent",
+      "bg-white",
+      "dark:bg-background-dark/50",
+      "hover:bg-primary/5",
+      "hover:border-primary/40",
+      "cursor-pointer",
+    ].join(" ");
+    card.setAttribute(
+      "aria-label",
+      `Zarządzaj produktem ${product.Attributes?.Title ?? "Bez nazwy"}`
+    );
+    card.tabIndex = 0;
+    const productId = product?.Id ?? "";
+    const handleNavigation = () => {
+      if (!productId) {
+        return;
+      }
+
+      window.location.href = `manage.html?productId=${encodeURIComponent(productId)}`;
+    };
+    card.addEventListener("click", handleNavigation);
+    card.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        handleNavigation();
+      }
+    });
+    const imageUrl = Array.isArray(product.Images) && product.Images.length > 0 ? product.Images[0] : "";
+    const image = document.createElement("div");
+    image.className = "bg-center bg-no-repeat aspect-square bg-cover rounded size-16 flex-shrink-0";
+    if (imageUrl) {
+      image.style.backgroundImage = `url("${imageUrl}")`;
+    } else {
+      image.classList.add("bg-black/10", "dark:bg-white/10");
+    }
+
+    const body = document.createElement("div");
+    body.className = "flex flex-1 items-center gap-4";
+
+    const content = document.createElement("div");
+    content.className = "flex-1";
+
+    const title = document.createElement("p");
+    title.className = "text-black dark:text-white font-semibold";
+    title.textContent = product.Attributes?.Title ?? "Bez nazwy";
+
+    content.appendChild(title);
+
+    card.appendChild(image);
+    body.appendChild(content);
+
+    card.appendChild(body);
+
+    return card;
+  }
+
+  function renderError(message) {
+    const errorCard = document.createElement("div");
+    errorCard.className = "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200 p-4 rounded-lg";
+    errorCard.textContent = message;
+    productListElement.innerHTML = "";
+    productListElement.appendChild(errorCard);
+  }
+
+  async function loadProducts() {
+    try {
+      productListElement.innerHTML = "";
+      const response = await fetch("https://clothingposterappservice-ada8b4eahpfxbrd6.polandcentral-01.azurewebsites.net/products");
+      if (!response.ok) {
+        throw new Error(`Nie udało się wczytać produktów (${response.status})`);
+      }
+
+      const products = await response.json();
+      if (!Array.isArray(products) || products.length === 0) {
+        const emptyCard = document.createElement("div");
+        emptyCard.className = "bg-white dark:bg-background-dark/50 p-4 rounded-lg text-gray-500 dark:text-gray-400";
+        emptyCard.textContent = "Brak dostępnych produktów.";
+        productListElement.appendChild(emptyCard);
+        return;
+      }
+
+      products.forEach((product) => {
+        const card = renderProductCard(product);
+        productListElement.appendChild(card);
+      });
+    } catch (error) {
+      renderError("Nie można wczytać produktów. Spróbuj ponownie później.");
+      console.error("Błąd podczas wczytywania produktów", error);
+    }
+  }
+
+  const refreshButton = document.getElementById("refresh-products");
+  if (refreshButton) {
+    refreshButton.addEventListener("click", () => {
+      loadProducts();
+    });
+  }
+
+  loadProducts();
+</script>
+</body></html>
